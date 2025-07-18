@@ -1,0 +1,18 @@
+meta {
+  name: [TEST] Create entity
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{url}}/api/entities
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "userId": "3cd2f654-fbb3-46ad-a922-f9d1ea4ca1fc",
+    "name": "TEST"
+  }
+}
