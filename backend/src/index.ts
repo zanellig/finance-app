@@ -3,8 +3,8 @@ import { etag } from "hono/etag";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
 
-import * as entities from "./routes/entities.route";
-import * as users from "./routes/users.route";
+import * as entities from "./controllers/entities.controller";
+import * as users from "./controllers/users.controller";
 
 const app = new Hono();
 app.use(etag(), logger());
