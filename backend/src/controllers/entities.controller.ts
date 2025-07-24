@@ -32,9 +32,8 @@ export async function getEntity(c: Context) {
 
 export async function createEntity(c: Context) {
   const entity = await c.req.json();
-  const entityInsertor = createEntityDto.safeParse(entity);
-  if (!entityInsertor.success) {
-    console.log(entityInsertor);
+  const parsedEntity = createEntityDto.safeParse(entity);
+  if (!parsedEntity.success) {
     return c.json({ data: null }, 400);
   }
   const [user] = await db.select().from(users);
@@ -43,7 +42,7 @@ export async function createEntity(c: Context) {
       id: entities.id,
     })
     .from(entities)
-    .where(eq(entities.name, entityInsertor.data.name));
+    .where(eq(entities.name, parsedEntity.data.name));
   if (existingEntity.length) {
     return c.json(
       { error: "Entity already exists", data: existingEntity[0] },
@@ -52,7 +51,7 @@ export async function createEntity(c: Context) {
   }
   const [res] = await db
     .insert(entities)
-    .values({ userId: user.id, ...entityInsertor.data })
+    .values({ userId: user.id, ...parsedEntity.data })
     .$returningId();
 
   return c.json(createEntityResponseDto.safeParse(res), 201);
