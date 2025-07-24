@@ -1,11 +1,21 @@
+# Finance app backend development guide
+
 To install dependencies:
+
 ```sh
-bun install
+pnpm install
+```
+
+Run migrations:
+
+```
+pnpm db:push
 ```
 
 To run:
+
 ```sh
-bun run dev
+pnpm dev
 ```
 
-open http://localhost:3000
+The application will be hosted <http://localhost:3000>
