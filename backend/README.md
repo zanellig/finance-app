@@ -8,7 +8,7 @@ pnpm install
 
 Run migrations:
 
-```
+```sh
 pnpm db:push
 ```
 
@@ -18,4 +18,4 @@ To run:
 pnpm dev
 ```
 
-The application will be hosted <http://localhost:3000>
+The application will be hosted at <http://localhost:3000>
