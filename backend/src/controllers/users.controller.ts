@@ -10,7 +10,7 @@ export async function createTestUser(c: Context) {
       name,
       email,
     })
-    .catch((error) => console.error(error));
+    .$returningId();
 
   return c.json({ data: result }, 201);
 }
