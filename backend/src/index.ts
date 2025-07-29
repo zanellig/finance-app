@@ -15,9 +15,10 @@ const app = new Hono();
 app.use(etag(), logger());
 app.use("/api/*", cors());
 
-app.get("/api/entities", entities.getEntities);
+app
+  .get("/api/entities", entities.getEntities)
+  .post(validateBody(createEntityDto), entities.createEntity);
 app.get("/api/entities/:id", entities.getEntity);
-app.post("/api/entities", validateBody(createEntityDto), entities.createEntity);
 
 app.post("/api/users", users.createTestUser);
 
