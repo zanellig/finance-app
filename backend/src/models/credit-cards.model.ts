@@ -8,13 +8,11 @@ import {
 } from "drizzle-orm/mysql-core";
 import { entities } from "./entities.model";
 import { v4 } from "uuid";
+import { setNullCascade } from './constants';
 
 export const creditCards = mysqlTable("credit_cards", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
-  entityId: varchar("entity_id", { length: 36 }).references(() => entities.id, {
-    onDelete: "set null",
-    onUpdate: "cascade",
-  }),
+  entityId: varchar("entity_id", { length: 36 }).references(() => entities.id, setNullCascade),
   status: mysqlEnum(["active", "inactive", "blocked", "deleted"]).default(
     "inactive"
   ),

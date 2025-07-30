@@ -10,20 +10,15 @@ import {
 import { entities } from "./entities.model";
 import { users } from "./users.model";
 import { v4 } from "uuid";
+import { cascadeCascade } from "./constants";
 
 export const accounts = mysqlTable("accounts", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
   userId: varchar("user_id", { length: 36 })
-    .references(() => users.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    })
+    .references(() => users.id, cascadeCascade)
     .notNull(),
   entityId: varchar("entity_id", { length: 36 })
-    .references(() => entities.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    })
+    .references(() => entities.id, cascadeCascade)
     .notNull(),
   name: varchar({ length: 255 }).notNull().unique(),
   type: mysqlEnum(["savings", "checking", "interest_bearing"]).notNull(),

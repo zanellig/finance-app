@@ -11,13 +11,12 @@ import { accounts } from "./accounts.model";
 import { loans } from "./loans.model";
 import { users } from "./users.model";
 import { v4 } from "uuid";
+import { noActionCascade, setNullCascade } from "./constants";
 
 export const creditCardTransactions = mysqlTable("credit_card_transactions", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
   creditCardId: varchar("credit_card_id", { length: 36 })
-    .references(() => creditCards.id, {
-      onDelete: "no action",
-    })
+    .references(() => creditCards.id, noActionCascade)
     .notNull(),
   status: mysqlEnum(["approved", "declined", "pending", "refunded"]).default(
     "pending"
@@ -33,26 +32,20 @@ export const creditCardTransactions = mysqlTable("credit_card_transactions", {
 
 export const transactions = mysqlTable("transactions", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
-  userId: varchar("user_id", { length: 36 }).references(() => users.id, {
-    onDelete: "set null",
-    onUpdate: "cascade",
-  }),
+  userId: varchar("user_id", { length: 36 }).references(
+    () => users.id,
+    noActionCascade
+  ),
   fromAccountId: varchar("from_account_id", { length: 36 })
-    .references(() => accounts.id, {
-      onDelete: "no action",
-      onUpdate: "cascade",
-    })
+    .references(() => accounts.id, noActionCascade)
     .notNull(),
   toAccountId: varchar("to_account_id", { length: 36 })
-    .references(() => accounts.id, {
-      onDelete: "no action",
-      onUpdate: "cascade",
-    })
+    .references(() => accounts.id, noActionCascade)
     .notNull(),
-  loanId: varchar("loan_id", { length: 36 }).references(() => loans.id, {
-    onDelete: "no action",
-    onUpdate: "cascade",
-  }),
+  loanId: varchar("loan_id", { length: 36 }).references(
+    () => loans.id,
+    noActionCascade
+  ),
   type: mysqlEnum([
     "payment",
     "transfer",

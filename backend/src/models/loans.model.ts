@@ -10,17 +10,18 @@ import {
 import { entities } from "./entities.model";
 import { users } from "./users.model";
 import { v4 } from "uuid";
+import { noActionCascade } from "./constants";
 
 export const loans = mysqlTable("loans", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
-  userId: varchar("user_id", { length: 36 }).references(() => users.id, {
-    onDelete: "no action",
-    onUpdate: "cascade",
-  }),
-  entityId: varchar("entity_id", { length: 36 }).references(() => entities.id, {
-    onDelete: "no action",
-    onUpdate: "cascade",
-  }),
+  userId: varchar("user_id", { length: 36 }).references(
+    () => users.id,
+    noActionCascade
+  ),
+  entityId: varchar("entity_id", { length: 36 }).references(
+    () => entities.id,
+    noActionCascade
+  ),
   name: varchar({ length: 255 }),
   initialCapital: decimal("initial_capital", {
     precision: 2,
