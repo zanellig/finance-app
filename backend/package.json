@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "scripts": {
-    "dev": "bun run --hot src/index.ts --no-clear-screen",
+    "dev": "bun --hot --no-clear-screen run src/index.ts ",
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
