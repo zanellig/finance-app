@@ -1,7 +1,9 @@
 import * as z from "zod";
 import { configDotenv } from "dotenv";
 
-configDotenv();
+configDotenv({
+  quiet: true,
+});
 
 const envSchema = z.object({
   MYSQL_URL: z
@@ -12,4 +14,14 @@ const envSchema = z.object({
     ),
 });
 
-export const env = envSchema.parse(process.env);
+const parsedEnv = envSchema.safeParse(process.env);
+
+if (!parsedEnv.success) {
+  console.error(
+    "❌ Invalid environment variables:",
+    z.treeifyError(parsedEnv.error)
+  );
+  throw new Error("Invalid environment variables.");
+}
+
+export const env = parsedEnv.data;
