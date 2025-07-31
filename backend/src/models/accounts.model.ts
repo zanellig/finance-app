@@ -14,9 +14,6 @@ import { cascadeCascade, defaultTimestamps } from "./constants";
 
 export const accounts = mysqlTable("accounts", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
-  userId: varchar("user_id", { length: 36 })
-    .references(() => users.id, cascadeCascade)
-    .notNull(),
   entityId: varchar("entity_id", { length: 36 })
     .references(() => entities.id, cascadeCascade)
     .notNull(),

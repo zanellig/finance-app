@@ -13,10 +13,6 @@ import { defaultTimestamps, noActionCascade } from "./constants";
 
 export const loans = mysqlTable("loans", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
-  userId: varchar("user_id", { length: 36 }).references(
-    () => users.id,
-    noActionCascade
-  ),
   entityId: varchar("entity_id", { length: 36 }).references(
     () => entities.id,
     noActionCascade
