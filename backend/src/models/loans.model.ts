@@ -3,14 +3,13 @@ import {
   int,
   mysqlEnum,
   mysqlTable,
-  timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
 
 import { entities } from "./entities.model";
 import { users } from "./users.model";
 import { v4 } from "uuid";
-import { noActionCascade } from "./constants";
+import { defaultTimestamps, noActionCascade } from "./constants";
 
 export const loans = mysqlTable("loans", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
@@ -50,6 +49,5 @@ export const loans = mysqlTable("loans", {
   remainingCapital: decimal("remaining_capital", {
     precision: 2,
   }).notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").onUpdateNow(),
+  ...defaultTimestamps,
 });

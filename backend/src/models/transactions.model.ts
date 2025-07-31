@@ -11,7 +11,7 @@ import { accounts } from "./accounts.model";
 import { loans } from "./loans.model";
 import { users } from "./users.model";
 import { v4 } from "uuid";
-import { noActionCascade, setNullCascade } from "./constants";
+import { defaultTimestamps, noActionCascade } from "./constants";
 
 export const creditCardTransactions = mysqlTable("credit_card_transactions", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
@@ -28,6 +28,7 @@ export const creditCardTransactions = mysqlTable("credit_card_transactions", {
   currentInstallment: int("current_installment", { unsigned: true })
     .default(1)
     .notNull(),
+  ...defaultTimestamps,
 });
 
 export const transactions = mysqlTable("transactions", {
@@ -54,4 +55,5 @@ export const transactions = mysqlTable("transactions", {
   ]).notNull(),
   currency: mysqlEnum(["ARS", "USD"]).default("ARS"),
   amount: decimal({ precision: 2 }).default("0.00").notNull(),
+  ...defaultTimestamps,
 });

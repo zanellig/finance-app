@@ -10,7 +10,7 @@ import {
 import { entities } from "./entities.model";
 import { users } from "./users.model";
 import { v4 } from "uuid";
-import { cascadeCascade } from "./constants";
+import { cascadeCascade, defaultTimestamps } from "./constants";
 
 export const accounts = mysqlTable("accounts", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
@@ -31,6 +31,5 @@ export const accounts = mysqlTable("accounts", {
   overdraftLimit: decimal("overdraft_limit", { precision: 2 })
     .notNull()
     .default("0.00"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").onUpdateNow(),
+  ...defaultTimestamps,
 });

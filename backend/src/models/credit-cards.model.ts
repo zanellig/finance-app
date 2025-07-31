@@ -8,11 +8,14 @@ import {
 } from "drizzle-orm/mysql-core";
 import { entities } from "./entities.model";
 import { v4 } from "uuid";
-import { setNullCascade } from './constants';
+import { defaultTimestamps, setNullCascade } from "./constants";
 
 export const creditCards = mysqlTable("credit_cards", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
-  entityId: varchar("entity_id", { length: 36 }).references(() => entities.id, setNullCascade),
+  entityId: varchar("entity_id", { length: 36 }).references(
+    () => entities.id,
+    setNullCascade
+  ),
   status: mysqlEnum(["active", "inactive", "blocked", "deleted"]).default(
     "inactive"
   ),
@@ -27,6 +30,5 @@ export const creditCards = mysqlTable("credit_cards", {
   number: varchar({ length: 16 }).unique(),
   expiration: timestamp().notNull(),
   closingDay: int("closing_day").default(30),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").onUpdateNow(),
+  ...defaultTimestamps,
 });
