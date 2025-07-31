@@ -1,5 +1,6 @@
 import db from "../services/db";
 import { entities } from "../models/entities.model";
+import { users } from "../models/users.model";
 import { eq } from "drizzle-orm";
 import {
   createEntityDto,
@@ -9,7 +10,6 @@ import {
 } from "../dtos/entities.dto";
 
 import type { Context } from "hono";
-import { users } from "../models/users.model";
 
 export async function getEntities(c: Context) {
   const entitiesRes = await db.select().from(entities);
