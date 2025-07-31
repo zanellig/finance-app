@@ -2,7 +2,11 @@
   "name": "backend",
   "scripts": {
     "dev": "bun --hot --no-clear-screen run src/index.ts",
-    "db:push": "bun run --bun drizzle-kit push"
+    "db:push": "bun run --bun drizzle-kit push",
+    "db:generate": "bun run --bun drizzle-kit generate",
+    "db:migrate": "bun run --bun drizzle-kit migrate",
+    "db:studio": "bun run drizzle-kit studio",
+    "db:check": "bun run --bun drizzle-kit check"
   },
   "dependencies": {
     "dotenv": "^17.2.0",
