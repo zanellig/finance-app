@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@hono/bun-compress':
+        specifier: ^0.1.0
+        version: 0.1.0(hono@4.8.5)
       dotenv:
         specifier: ^17.2.0
         version: 17.2.0
@@ -334,6 +337,11 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@hono/bun-compress@0.1.0':
+    resolution: {integrity: sha512-wxy9PdC07Yc81NawIcdIiuGAEeDujwPWd01KdxubXJ33G9vdjUO85ec0UMjH0Cy7+zfNXlcWgJ+zoATjT/IfTg==}
+    peerDependencies:
+      hono: '*'
 
   '@types/bun@1.2.18':
     resolution: {integrity: sha512-Xf6RaWVheyemaThV0kUfaAUvCNokFr+bH8Jxp+tTZfx7dAPA8z9ePnP9S9+Vspzuxxx9JRAXhnyccRj3GyCMdQ==}
@@ -713,6 +721,10 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.6':
     optional: true
+
+  '@hono/bun-compress@0.1.0(hono@4.8.5)':
+    dependencies:
+      hono: 4.8.5
 
   '@types/bun@1.2.18(@types/react@19.1.8)':
     dependencies:
