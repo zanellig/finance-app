@@ -2,6 +2,8 @@
 // Following the naming convention: [onDelete behavior][onUpdate behavior]
 // import type { ReferenceConfig } from "drizzle-orm/mysql-core";
 
+import { timestamp } from "drizzle-orm/mysql-core";
+
 // No Action combinations
 export const noActionNoAction = {
   onDelete: "no action",
@@ -131,3 +133,9 @@ export const setDefaultSetDefault = {
   onDelete: "set default",
   onUpdate: "set default",
 } as const;
+
+export const defaultTimestamps = {
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").onUpdateNow(),
+  deletedAt: timestamp("deleted_at"),
+};
