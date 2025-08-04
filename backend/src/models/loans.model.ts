@@ -3,6 +3,7 @@ import {
   int,
   mysqlEnum,
   mysqlTable,
+  timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
 
@@ -28,6 +29,7 @@ export const loans = mysqlTable("loans", {
   })
     .notNull()
     .default("0.00"),
+  consolidatedAt: timestamp("consolidated_at").notNull(),
   installments: int({ unsigned: true }).notNull().default(1),
   remainingInstallments: int("remaining_installments", {
     unsigned: true,
@@ -45,5 +47,14 @@ export const loans = mysqlTable("loans", {
   remainingCapital: decimal("remaining_capital", {
     precision: 2,
   }).notNull(),
+  paymentFrequency: mysqlEnum("payment_frequency", [
+    "monthly",
+    "biweekly",
+    "quarterly",
+    "annually",
+  ])
+    .notNull()
+    .default("monthly"),
+  collateral: varchar("collateral", { length: 255 }),
   ...defaultTimestamps,
 });
