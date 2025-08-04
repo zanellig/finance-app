@@ -8,7 +8,6 @@ import {
 } from "drizzle-orm/mysql-core";
 
 import { entities } from "./entities.model";
-import { users } from "./users.model";
 import { v4 } from "uuid";
 import { cascadeCascade, defaultTimestamps } from "./constants";
 
@@ -28,5 +27,8 @@ export const accounts = mysqlTable("accounts", {
   overdraftLimit: decimal("overdraft_limit", { precision: 2 })
     .notNull()
     .default("0.00"),
+  accountNumber: varchar("account_number", { length: 50 }).unique(),
+  currency: mysqlEnum("currency", ["ARS", "USD"]).default("ARS"),
+  openedAt: timestamp("opened_at"),
   ...defaultTimestamps,
 });
