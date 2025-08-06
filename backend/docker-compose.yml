@@ -6,7 +6,7 @@ services:
     container_name: mysql-container
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: 123Root123
+      MYSQL_ROOT_PASSWORD: change_me
       MYSQL_DATABASE: finance_db
       TZ: America/Argentina/Buenos_Aires
     ports:
