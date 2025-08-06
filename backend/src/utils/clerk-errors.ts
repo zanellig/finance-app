@@ -96,9 +96,10 @@ export enum ClerkAPIErrorCodes {
 }
 
 /**
- * Possible, this schema has missing fields. Use with `safeParse` only.
+ * It's possible that this schema has missing fields. Use with `safeParse` only.
  *
  * @see https://clerk.com/docs/errors/backend-api
+ * @see https://github.com/clerk/clerk-docs/blob/main/clerk-typedoc/types/clerk-api-error.mdx
  */
 export const clerkAPIResponseErrorSchema = z.object({
   status: z.number(),
@@ -109,16 +110,24 @@ export const clerkAPIResponseErrorSchema = z.object({
     z.object({
       code: z.enum(ClerkAPIErrorCodes),
       message: z.string(),
-      longMessage: z.string(),
+      longMessage: z.string().optional(),
       meta: z
         .object({
-          paramName: z.string(),
+          emailAddresses: z.array(z.string()).optional(),
+          identifiers: z.array(z.string()).optional(),
+          paramName: z.string().optional(),
+          permissions: z.array(z.string()).optional(),
           sessionId: z.string().optional(),
-          emailAddresses: z.any().optional(), // I think this is an Array, but haven't tested
-          identifiers: z.any().optional(),
-          zxcvbn: z.any().optional(),
-          plan: z.string().optional(),
-          isPlanUpgradePossible: z.boolean().optional(),
+          zxcvbn: z
+            .object({
+              suggestions: z.array(
+                z.object({
+                  code: z.string(),
+                  message: z.string(),
+                })
+              ),
+            })
+            .optional(),
         })
         .optional(),
     })
