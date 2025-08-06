@@ -96,8 +96,6 @@ export enum ClerkAPIErrorCodes {
 }
 
 /**
- * It's possible that this schema has missing fields. Use with `safeParse` only.
- *
  * @see https://clerk.com/docs/errors/backend-api
  * @see https://github.com/clerk/clerk-docs/blob/main/clerk-typedoc/types/clerk-api-error.mdx
  */
