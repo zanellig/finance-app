@@ -132,5 +132,8 @@ export const clerkAPIResponseErrorSchema = z.object({
   ),
 });
 
-/** @see https://clerk.com/docs/errors/backend-api */
+/**
+ * @see https://clerk.com/docs/errors/backend-api
+ * @see https://github.com/clerk/clerk-docs/blob/main/clerk-typedoc/types/clerk-api-error.mdx
+ */
 export type ClerkAPIResponseError = z.infer<typeof clerkAPIResponseErrorSchema>;
