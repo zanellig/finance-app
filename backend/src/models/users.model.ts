@@ -10,5 +10,6 @@ export const users = mysqlTable("users", {
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
   passwordHash: varchar("password_hash", { length: 255 }).notNull(),
+  externalId: varchar("external_id", { length: 255 }).unique(),
   ...defaultTimestamps,
 });
