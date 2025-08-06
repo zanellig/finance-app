@@ -7,9 +7,10 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
-import { entities } from "./entities.model";
 import { v4 } from "uuid";
-import { cascadeCascade, defaultTimestamps } from "./constants";
+
+import { entities } from "@/models/entities.model";
+import { cascadeCascade, defaultTimestamps } from "@/models/constants";
 
 export const accounts = mysqlTable("accounts", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),

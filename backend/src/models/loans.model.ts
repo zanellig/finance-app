@@ -7,16 +7,16 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
-import { entities } from "./entities.model";
-import { users } from "./users.model";
 import { v4 } from "uuid";
-import { defaultTimestamps, noActionCascade } from "./constants";
+
+import { entities } from "@/models/entities.model";
+import { defaultTimestamps, noActionCascade } from "@/models/constants";
 
 export const loans = mysqlTable("loans", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
   entityId: varchar("entity_id", { length: 36 }).references(
     () => entities.id,
-    noActionCascade
+    noActionCascade,
   ),
   name: varchar({ length: 255 }),
   initialCapital: decimal("initial_capital", {

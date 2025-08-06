@@ -8,14 +8,15 @@ import {
 } from "drizzle-orm/mysql-core";
 
 import { v4 } from "uuid";
-import { users } from "./users.model";
-import { defaultTimestamps, noActionCascade } from "./constants";
+
+import { users } from "@/models/users.model";
+import { defaultTimestamps, noActionCascade } from "@/models/constants";
 
 export const income = mysqlTable("income", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
   userId: varchar("user_id", { length: 36 }).references(
     () => users.id,
-    noActionCascade
+    noActionCascade,
   ),
   name: varchar({ length: 255 }),
   amount: decimal({

@@ -6,18 +6,20 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
-import { entities } from "./entities.model";
+
 import { v4 } from "uuid";
-import { defaultTimestamps, setNullCascade } from "./constants";
+
+import { entities } from "@/models/entities.model";
+import { defaultTimestamps, setNullCascade } from "@/models/constants";
 
 export const creditCards = mysqlTable("credit_cards", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
   entityId: varchar("entity_id", { length: 36 }).references(
     () => entities.id,
-    setNullCascade
+    setNullCascade,
   ),
   status: mysqlEnum(["active", "inactive", "blocked", "deleted"]).default(
-    "inactive"
+    "inactive",
   ),
   name: varchar({ length: 36 }).notNull().unique(),
   description: varchar({ length: 255 }),

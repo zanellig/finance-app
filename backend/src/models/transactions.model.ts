@@ -6,12 +6,14 @@ import {
   mysqlTable,
   varchar,
 } from "drizzle-orm/mysql-core";
-import { creditCards } from "./credit-cards.model";
-import { accounts } from "./accounts.model";
-import { loans } from "./loans.model";
-import { users } from "./users.model";
+
 import { v4 } from "uuid";
-import { defaultTimestamps, noActionCascade } from "./constants";
+
+import { creditCards } from "@/models/credit-cards.model";
+import { accounts } from "@/models/accounts.model";
+import { loans } from "@/models/loans.model";
+import { users } from "@/models/users.model";
+import { defaultTimestamps, noActionCascade } from "@/models/constants";
 
 export const creditCardTransactions = mysqlTable("credit_card_transactions", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
@@ -19,7 +21,7 @@ export const creditCardTransactions = mysqlTable("credit_card_transactions", {
     .references(() => creditCards.id, noActionCascade)
     .notNull(),
   status: mysqlEnum(["approved", "declined", "pending", "refunded"]).default(
-    "pending"
+    "pending",
   ),
   currency: mysqlEnum(["ARS", "USD"]).default("ARS"),
   amount: decimal({ precision: 2 }).default("0.00").notNull(),
@@ -35,7 +37,7 @@ export const transactions = mysqlTable("transactions", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
   userId: varchar("user_id", { length: 36 }).references(
     () => users.id,
-    noActionCascade
+    noActionCascade,
   ),
   fromAccountId: varchar("from_account_id", { length: 36 })
     .references(() => accounts.id, noActionCascade)
@@ -45,7 +47,7 @@ export const transactions = mysqlTable("transactions", {
     .notNull(),
   loanId: varchar("loan_id", { length: 36 }).references(
     () => loans.id,
-    noActionCascade
+    noActionCascade,
   ),
   type: mysqlEnum([
     "payment",

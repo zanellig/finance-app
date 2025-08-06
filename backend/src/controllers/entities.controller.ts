@@ -1,7 +1,10 @@
 import db from "../services/db";
+import { Hono } from "hono";
+
 import { entities } from "../models/entities.model";
 import { users } from "../models/users.model";
 import { eq } from "drizzle-orm";
+
 import {
   createEntityDto,
   createEntityResponseDto,
@@ -10,6 +13,10 @@ import {
 } from "../dtos/entities.dto";
 
 import type { Context } from "hono";
+
+const entityRouter = new Hono();
+
+entityRouter.get("/entities/:id?", async (c) => {});
 
 export async function getEntities(c: Context) {
   const entitiesRes = await db.select().from(entities);

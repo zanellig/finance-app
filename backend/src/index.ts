@@ -1,16 +1,20 @@
+// --- Core ---
 import { Hono } from "hono";
 import { etag } from "hono/etag";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
+import { trimTrailingSlash } from "hono/trailing-slash";
 import { compress } from "@hono/bun-compress";
 
-import * as entities from "./controllers/entities.controller";
-import * as users from "./controllers/users.controller";
+// --- Controllers ---
+import * as entities from "@/controllers/entities.controller";
+import * as users from "@/controllers/users.controller";
 
-import { createEntityDto } from "./dtos/entities.dto";
+// --- DTOs ---
+import { createEntityDto } from "@/dtos/entities.dto";
 
-import { validateBody } from "./utils/validator";
-
+// --- Utils ---
+import { validateBody } from "@/utils/validator";
 /**
  * This way of writing Rails-like controllers is not recommended in the Hono docs.
  * Instead, we sould do the following:
@@ -36,6 +40,7 @@ const app = new Hono();
 
 app.use(etag(), logger());
 app.use("/api/*", cors());
+app.use(trimTrailingSlash());
 app.use(compress());
 
 app
@@ -44,5 +49,9 @@ app
 app.get("/api/entities/:id", entities.getEntity);
 
 app.post("/api/users", users.createTestUser);
+
+app.all("*", (c) => {
+  return c.json({ sucess: false, message: "Not Found" }, 404);
+});
 
 export default app;
