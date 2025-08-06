@@ -1,4 +1,4 @@
-/** @type {import('prettier').Config} */
+import type { Config } from 'prettier'
 module.exports = {
   importOrder: [
     "^(react/(.*)$)|^(react$)",
@@ -10,14 +10,14 @@ module.exports = {
     "<THIRD_PARTY_MODULES>",
     "",
     "^types$",
-    "^@/shared/(.*)$",
-    "^@/lib/(.*)$",
-    "^@/hooks/(.*)$",
-    "^@/components/ui/(.*)$",
+    "^@/controllers/(.*)$",
+    "^@/models/(.*)$",
+    "^@/dtos/(.*)$",
+    "^@/services/(.*)$",
     "^@/components/(.*)$",
     "",
     "^[./]",
   ],
   importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
   plugins: ["@ianvs/prettier-plugin-sort-imports"],
-};
+} satisfies Config;
