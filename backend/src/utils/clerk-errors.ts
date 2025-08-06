@@ -6,33 +6,33 @@ export enum ClerkAPIErrorCodes {
   FailedToVerifyInternalMigrationJwt = "failed_to_verify_internal_migration_jwt",
   IdentificationExists = "identification_exists",
   InternalMigrationJwtMissingInstanceId = "internal_migration_jwt_missing_instance_id",
-  InvalidAuthentication = "invalid_authentication",
-  InvalidAuthorization = "invalid_authorization",
-  InvalidAuthorizationHeaderFormat = "invalid_authorization_header_format",
-  InvalidClerkSecretKey = "invalid_clerk_secret_key",
-  InvalidRequestForEnvironment = "invalid_request_for_environment",
+  InvalidAuthentication = "authentication_invalid",
+  InvalidAuthorization = "authorization_invalid",
+  InvalidAuthorizationHeaderFormat = "authorization_header_format_invalid",
+  InvalidClerkSecretKey = "clerk_key_invalid",
+  InvalidRequestForEnvironment = "request_invalid_for_environment",
   RequestInvalidForInstance = "request_invalid_for_instance",
-  UnsupportedCountry = "unsupported_country",
+  UnsupportedCountry = "unsupported_country_code",
 
   // Allowlist
-  AllowlistIdentifierNotFound = "allowlist_identifier_not_found",
-  DuplicateAllowlistIdentifier = "duplicate_allowlist_identifier",
+  AllowlistIdentifierNotFound = "resource_not_found",
+  DuplicateAllowlistIdentifier = "duplicate_record",
 
   // Blocklist
-  BlocklistIdentifierNotFound = "blocklist_identifier_not_found",
-  DuplicateBlocklistIdentifier = "duplicate_blocklist_identifier",
+  BlocklistIdentifierNotFound = "resource_not_found",
+  DuplicateBlocklistIdentifier = "duplicate_record",
 
   // Clients
-  ClientNotFound = "client_not_found",
-  ClientNotFoundInRequest = "client_not_found_in_request",
+  ClientNotFound = "resource_not_found",
+  ClientNotFoundInRequest = "client_not_found",
 
   // Cookie
-  InvalidCookie = "invalid_cookie",
-  InvalidRotatingToken = "invalid_rotating_token",
-  MissingClaims = "missing_claims",
+  InvalidCookie = "cookie_invalid",
+  InvalidRotatingToken = "cookie_invalid",
+  MissingClaims = "cookie_invalid",
 
   // Deprecation
-  ApiEndpointDeprecated = "api_endpoint_deprecated",
+  ApiEndpointDeprecated = "operation_deprecated",
 
   // Domains
   DomainUpdateForbidden = "domain_update_forbidden",
@@ -43,7 +43,7 @@ export enum ClerkAPIErrorCodes {
   // Features
   FeatureNotEnabled = "feature_not_enabled",
   FeatureRequiresOidcProvider = "feature_requires_oidc_provider",
-  FeatureRequiresPsu = "feature_requires_psu",
+  FeatureRequiresPsu = "feature_requires_progressive_sign_up",
   UnsupportedSubscriptionPlanFeatures = "unsupported_subscription_plan_features",
 
   // Forms
@@ -74,10 +74,25 @@ export enum ClerkAPIErrorCodes {
   FormInvalidTypeParameter = "form_invalid_type_parameter",
 
   // Actor Tokens
-  ActorTokenCannotBeRevoked = "actor_token_cannot_be_revoked",
+  ActorTokenCannotBeRevoked = "actor_token_cannot_be_revoked_code",
 
   // Applications
-  AccountlessApplicationNotFound = "accountless_application_not_found",
+  AccountlessApplicationNotFound = "resource_not_found",
+  
+  // Missing Error Codes from Documentation
+  FormInvalidPasswordSizeInBytesExceeded = "form_password_size_in_bytes_exceeded",
+  FormInvalidUsernameCharacter = "form_username_invalid_character",
+  FormInvalidUsernameLength = "form_username_invalid_length",
+  FormInvalidUsernameNeedsNonNumberCharCode = "form_username_needs_non_number_char",
+  FormInvalidWeb3WalletAddress = "form_param_format_invalid",
+  FormMetadataInvalidType = "form_param_value_invalid",
+  FormMissingConditionalParameter = "form_conditional_param_missing",
+  FormMissingConditionalParameterOnExistence = "form_conditional_param_missing",
+  FormMissingResource = "form_resource_not_found",
+  FormNilParameter = "form_param_nil",
+  FormNotAllowedToDisableDefaultSecondFactor = "form_disable_default_second_factor_not_allowed",
+  FormParameterArraySizeExceeded = "form_param_array_size_exceeded",
+  SignInTokenCannotBeRevoked = "sign_in_token_cannot_be_revoked_code",
 }
 
 /**
