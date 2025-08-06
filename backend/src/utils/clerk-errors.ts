@@ -78,7 +78,7 @@ export enum ClerkAPIErrorCodes {
 
   // Applications
   AccountlessApplicationNotFound = "resource_not_found",
-  
+
   // Missing Error Codes from Documentation
   FormInvalidPasswordSizeInBytesExceeded = "form_password_size_in_bytes_exceeded",
   FormInvalidUsernameCharacter = "form_username_invalid_character",
@@ -110,15 +110,17 @@ export const clerkAPIResponseErrorSchema = z.object({
       code: z.enum(ClerkAPIErrorCodes),
       message: z.string(),
       longMessage: z.string(),
-      meta: z.object({
-        paramName: z.string(),
-        sessionId: z.string().optional(),
-        emailAddresses: z.any().optional(), // I think this is an Array, but haven't tested
-        identifiers: z.any().optional(),
-        zxcvbn: z.any().optional(),
-        plan: z.string().optional(),
-        isPlanUpgradePossible: z.boolean().optional(),
-      }),
+      meta: z
+        .object({
+          paramName: z.string(),
+          sessionId: z.string().optional(),
+          emailAddresses: z.any().optional(), // I think this is an Array, but haven't tested
+          identifiers: z.any().optional(),
+          zxcvbn: z.any().optional(),
+          plan: z.string().optional(),
+          isPlanUpgradePossible: z.boolean().optional(),
+        })
+        .optional(),
     })
   ),
 });
