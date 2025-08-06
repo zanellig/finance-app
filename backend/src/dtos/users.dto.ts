@@ -12,6 +12,7 @@ export const getUsersDto = getUserDto.array();
 export const createUserDto = user.pick({
   name: true,
   email: true,
+  password: true,
 });
 
 export const createUserResponseDto = user.pick({
