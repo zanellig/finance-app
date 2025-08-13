@@ -4,7 +4,7 @@ import { getAuth } from "@hono/clerk-auth";
 
 import { users } from "@/models/users.model";
 
-import { createUserDto } from "@/dtos/users.dto";
+import { createUserDto, createUserResponseDto } from "@/dtos/users.dto";
 
 import { validateBody } from "@/utils/validator";
 import authService from "@/services/auth";
@@ -20,7 +20,7 @@ usersRouter.post("/register", validateBody(createUserDto), async (c) => {
         success: false,
         message: "Already logged in",
       },
-      409,
+      409
     );
 
   const { name, email, password } = c.req.valid("json");
@@ -33,7 +33,7 @@ usersRouter.post("/register", validateBody(createUserDto), async (c) => {
   if (existingUser)
     return c.json({ success: false, message: "Username taken" }, 409);
 
-  const passwordHash = await Bun.password.hash(password);
+  const passwordHash = await Bun.password.hash(password, "argon2id");
 
   const [user] = await db
     .insert(users)
@@ -54,7 +54,7 @@ usersRouter.post("/register", validateBody(createUserDto), async (c) => {
     })
     .catch((e) => {
       console.error(e);
-      return;
+      return null;
     });
 
   if (!authRes) {
@@ -69,7 +69,9 @@ usersRouter.post("/register", validateBody(createUserDto), async (c) => {
     })
     .where(eq(users.id, user.id));
 
-  return c.json({ success: true, data: { ...user, authRes } }, 201);
+  const userData = createUserResponseDto.safeParse({ ...user, ...authRes });
+
+  return c.json(userData, 201);
 });
 
 export default usersRouter;
