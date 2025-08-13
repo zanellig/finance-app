@@ -17,6 +17,18 @@ pnpm db:push
 pnpm dev
 ```
 
+### Code Quality
+
+```bash
+# Run ESLint for code analysis
+bun run eslint .
+
+# Check code formatting with Prettier
+pnpm format:check
+
+# Note: Run these commands after implementing features or code modifications
+```
+
 ### Database Management
 
 ```bash
