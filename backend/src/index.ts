@@ -9,14 +9,10 @@ import { trimTrailingSlash } from "hono/trailing-slash";
 import { compress } from "@hono/bun-compress";
 
 // --- Controllers ---
-import * as entities from "@/controllers/entities.controller";
 import usersRouter from "@/controllers/users.controller";
-
-// --- DTOs ---
-import { createEntityDto } from "@/dtos/entities.dto";
+import entitiesRouter from "@/controllers/entities.controller";
 
 // --- Utils ---
-import { validateBody } from "@/utils/validator";
 import { env } from "@/config/env";
 
 /**
@@ -56,6 +52,7 @@ app.use(
 );
 
 app.route("/", usersRouter);
+app.route("/", entitiesRouter);
 
 app.get("/clerk", async (c) => {
   const auth = getAuth(c);
