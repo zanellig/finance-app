@@ -12,6 +12,10 @@ export const user = z.object({
   name: z.string(),
   email: z.email(),
   password: z.string(),
+  externalId: z.string().optional(),
+  username: z.string().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

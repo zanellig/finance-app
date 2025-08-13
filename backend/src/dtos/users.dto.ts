@@ -17,6 +17,10 @@ export const createUserDto = user.pick({
 
 export const createUserResponseDto = user.pick({
   id: true,
+  externalId: true,
+  username: true,
+  firstName: true,
+  lastName: true,
 });
 
 export const updateUserDto = user.pick({
