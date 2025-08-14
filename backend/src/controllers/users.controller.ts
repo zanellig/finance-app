@@ -4,7 +4,12 @@ import { getAuth } from "@hono/clerk-auth";
 
 import { users } from "@/models/users.model";
 
-import { createUserDto, createUserResponseDto, loginUserDto, loginResponseDto } from "@/dtos/users.dto";
+import {
+  createUserDto,
+  createUserResponseDto,
+  loginUserDto,
+  loginResponseDto,
+} from "@/dtos/users.dto";
 
 import { validateBody } from "@/utils/validator";
 import authService from "@/services/auth";
@@ -69,7 +74,13 @@ usersRouter.post("/register", validateBody(createUserDto), async (c) => {
     })
     .where(eq(users.id, user.id));
 
-  const userData = createUserResponseDto.safeParse({ ...user, ...authRes });
+  const { id, username } = authRes;
+
+  const userData = createUserResponseDto.safeParse({
+    ...user,
+    externalId: id,
+    username,
+  });
 
   return c.json(userData, 201);
 });
@@ -87,10 +98,7 @@ usersRouter.post("/login", validateBody(loginUserDto), async (c) => {
 
   const { email, password } = c.req.valid("json");
 
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email));
+  const [user] = await db.select().from(users).where(eq(users.email, email));
 
   if (!user) {
     return c.json({ success: false, message: "Invalid credentials" }, 401);
@@ -108,13 +116,16 @@ usersRouter.post("/login", validateBody(loginUserDto), async (c) => {
     });
 
     const userData = loginResponseDto.safeParse(user);
-    
-    return c.json({
-      success: true,
-      message: "Login successful",
-      user: userData.data,
-      token: signInToken.token,
-    }, 200);
+
+    return c.json(
+      {
+        success: true,
+        message: "Login successful",
+        user: userData.data,
+        token: signInToken.token,
+      },
+      200
+    );
   } catch (error) {
     console.error("Error creating sign-in token:", error);
     return c.json({ success: false, message: "Login failed" }, 500);
