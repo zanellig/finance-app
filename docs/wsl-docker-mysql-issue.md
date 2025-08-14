@@ -1,44 +1,144 @@
-# MySQL Container Connection Issue (WSL/Docker)
+# WSL2/Docker Desktop MySQL Connection Issue
 
-## Problem
+## Problem Overview
 
-When running a MySQL container with Docker and attempting to connect from the host (or WSL), the application could not connect to the database. The error appeared when running `pnpm db:push` to test the API-to-DB connection.
+Docker Desktop running on Windows with the WSL2 engine creates a separate `docker-desktop` distro that doesn't communicate well with other WSL distributions (like `Ubuntu-22.04`). This causes connectivity issues when trying to connect to MySQL containers from applications running in different WSL distros.
 
-## Investigation Steps
+## The Core Issue
 
-1. **Checked MySQL container status**: Confirmed the container was running and healthy.
-2. **Inspected container logs**: No errors found; MySQL started successfully.
-3. **Tested DB access inside the container**: Database was accessible from within the container.
-4. **Checked port mapping**: Port 3306 was mapped from container to host.
-5. **Reviewed connection string**: Initially used the container IP (`172.18.0.2:3306`), which caused timeouts.
-6. **Tried connecting via localhost/127.0.0.1**: Encountered authentication errors for `root@localhost`.
-7. **Checked MySQL users and permissions**: Verified users and privileges, created new users for external connections.
-8. **Tested direct MySQL connections**: Connections from the host failed, but worked from within the container or with host networking.
-9. **Reviewed Docker network configuration**: Confirmed container was on a bridge network; tried host networking.
-10. **Updated docker-compose.yml**: Switched to `network_mode: host` for the MySQL service.
+- **Docker Desktop**: Runs containers in the `docker-desktop` WSL2 distro
+- **Development Environment**: Running in `Ubuntu-22.04` WSL2 distro  
+- **Network Isolation**: These distros have separate network stacks, preventing direct communication
+
+## Current Workaround: Native MySQL on Ubuntu WSL
+
+Since the Docker networking issue remains unresolved, we're currently running MySQL natively on the Ubuntu WSL instance rather than in a Docker container.
+
+### Setup Steps
+
+1. **Install MySQL Server on Ubuntu WSL**:
+   ```bash
+   sudo apt update
+   sudo apt install mysql-server
+   ```
+
+2. **Configure MySQL**:
+   ```bash
+   sudo mysql_secure_installation
+   ```
+
+3. **Start MySQL Service**:
+   ```bash
+   sudo service mysql start
+   # or use systemctl if available
+   sudo systemctl start mysql
+   ```
+
+4. **Create Database and User**:
+   ```bash
+   sudo mysql -u root -p
+   ```
+   ```sql
+   CREATE DATABASE finance_db;
+   CREATE USER 'financeuser'@'localhost' IDENTIFIED BY 'financepass123';
+   GRANT ALL PRIVILEGES ON finance_db.* TO 'financeuser'@'localhost';
+   FLUSH PRIVILEGES;
+   EXIT;
+   ```
+
+5. **Update Environment Configuration**:
+   ```env
+   MYSQL_URL="mysql://financeuser:financepass123@localhost:3306/finance_db"
+   ```
+
+### Benefits of This Approach
+
+- **Direct Connection**: No Docker networking layer to troubleshoot
+- **Native Performance**: MySQL runs directly on the WSL Ubuntu instance
+- **Consistent Environment**: Same distro for both app and database
+- **Simplified Debugging**: Standard Linux MySQL troubleshooting applies
+
+### Managing the MySQL Service
+
+```bash
+# Start MySQL
+sudo service mysql start
+
+# Stop MySQL  
+sudo service mysql stop
+
+# Check status
+sudo service mysql status
+
+# Enable auto-start (optional)
+sudo systemctl enable mysql
+```
+
+## Docker-Related Attempts (Historical)
+
+Previous attempts to resolve the Docker networking issue included:
+
+- Using container IP addresses (172.18.0.x) - resulted in timeouts
+- Switching to localhost/127.0.0.1 connections - authentication failures
+- Implementing host networking mode - still had connectivity issues
+- Creating various MySQL users with different host permissions - no success
+
+## Why Docker Desktop WSL2 Integration is Problematic
+
+1. **Separate Network Stacks**: Each WSL distro has its own network interface
+2. **Port Forwarding Issues**: Ports exposed in `docker-desktop` may not be accessible from other distros
+3. **DNS Resolution**: Container names and localhost behave differently across distros
+4. **Firewall Rules**: Windows and WSL2 firewalls can interfere with inter-distro communication
+
+## Alternative Solutions (Not Currently Used)
+
+### Option 1: Run Application in Docker
+Move the entire development environment into Docker containers to ensure they're on the same network.
+
+### Option 2: Use Windows Host Networking
+Configure Docker Desktop to use Windows host networking instead of WSL2 networking.
+
+### Option 3: Unified WSL Distro
+Run both Docker and development tools in the same WSL distro (requires Docker CE installation in Ubuntu instead of Docker Desktop).
 
 ## Current Status
 
-We have not arrived at a solution yet, but it seems to be a networking issue when running Docker Desktop on Windows with the WSL2 engine.
+- ✅ **MySQL**: Running natively on Ubuntu-22.04 WSL instance
+- ✅ **Database Connection**: Working reliably via localhost:3306
+- ✅ **Development Workflow**: Functional with `pnpm db:push` and other database operations
+- ⏳ **Docker Integration**: Remains an unresolved challenge
 
-- **Update Docker Compose**: Set `network_mode: host` for the MySQL container in `docker-compose.yml`.
-- **Update Connection String**: Use `mysql://root:123Root123@127.0.0.1:3306/finance_db` in your `.env` file.
-- **Restart the Container**: Recreate the container with the new network settings.
+## Troubleshooting Tips
 
-## Final Status (Previous Attempts)
+If you encounter issues with the native MySQL setup:
 
-- MySQL container is running with host networking.
-- Database is accessible from the host at `127.0.0.1:3306`.
-- If authentication issues persist, reset the MySQL root password with native authentication:
+1. **Check MySQL Status**:
+   ```bash
+   sudo service mysql status
+   ```
 
-  ```sh
-  docker exec mysql-container mysql -u root -p123Root123 -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '123Root123'; FLUSH PRIVILEGES;"
-  ```
+2. **Review MySQL Error Logs**:
+   ```bash
+   sudo tail -f /var/log/mysql/error.log
+   ```
 
-- Alternatively, run your application inside a container on the same Docker network as MySQL.
+3. **Test Connection**:
+   ```bash
+   mysql -u financeuser -p -h localhost finance_db
+   ```
 
-## Summary
+4. **Verify Port Binding**:
+   ```bash
+   sudo netstat -tlnp | grep :3306
+   # or
+   ss -tlnp | grep :3306
+   ```
 
-- The root cause appears to be related to MySQL's authentication configuration and Docker's network isolation, especially when using Docker Desktop with WSL2.
-- Using host networking and the correct connection string did not fully resolve the issue in this environment.
-- If you encounter similar issues, check user permissions, authentication methods, and network settings, and consider WSL2/Docker Desktop networking limitations.
+## Future Considerations
+
+This native MySQL approach is suitable for development but may need adjustment for:
+- Production deployments (should use containerized MySQL)
+- Team development (Docker Compose provides consistency)
+- CI/CD pipelines (typically expect containerized services)
+
+When Docker Desktop's WSL2 networking issues are resolved or when moving to a different development setup, we can revisit containerized MySQL deployment.
