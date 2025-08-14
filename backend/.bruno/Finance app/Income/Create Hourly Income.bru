@@ -1,0 +1,22 @@
+meta {
+  name: Create Hourly Income
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{url}}/api/income
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Freelance Development",
+    "amount": "85.00",
+    "frequency": "monthly",
+    "isHourly": true,
+    "startDate": "2024-01-01T00:00:00.000Z",
+    "endDate": "2024-12-31T00:00:00.000Z"
+  }
+}

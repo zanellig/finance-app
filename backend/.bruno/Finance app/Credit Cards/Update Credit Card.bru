@@ -1,0 +1,22 @@
+meta {
+  name: Update Credit Card
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{url}}/api/credit-cards/123e4567-e89b-12d3-a456-426614174000
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Chase Sapphire Reserve",
+    "lastFourDigits": "1234",
+    "creditLimit": "7500.00",
+    "currentBalance": "2000.00",
+    "issuer": "Chase",
+    "expirationDate": "2027-12-31T00:00:00.000Z"
+  }
+}

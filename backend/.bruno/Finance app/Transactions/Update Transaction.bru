@@ -1,0 +1,21 @@
+meta {
+  name: Update Transaction
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{url}}/api/transactions/123e4567-e89b-12d3-a456-426614174000
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "fromAccountId": "123e4567-e89b-12d3-a456-426614174001",
+    "toAccountId": "123e4567-e89b-12d3-a456-426614174002",
+    "amount": "300.00",
+    "description": "Updated transfer to savings",
+    "transactionDate": "2024-08-14T10:30:00.000Z"
+  }
+}

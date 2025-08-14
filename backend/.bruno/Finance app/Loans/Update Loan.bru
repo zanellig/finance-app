@@ -1,0 +1,24 @@
+meta {
+  name: Update Loan
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{url}}/api/loans/123e4567-e89b-12d3-a456-426614174000
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Home Mortgage - Refinanced",
+    "principalAmount": "300000.00",
+    "currentBalance": "275000.00",
+    "interestRate": "2.8",
+    "termMonths": 300,
+    "monthlyPayment": "1200.00",
+    "lender": "Bank of America",
+    "startDate": "2023-01-01T00:00:00.000Z"
+  }
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Update Credit Card Transaction
+  type: http
+  seq: 9
+}
+
+put {
+  url: {{url}}/api/transactions/credit-cards/123e4567-e89b-12d3-a456-426614174000
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "creditCardId": "123e4567-e89b-12d3-a456-426614174000",
+    "amount": "95.49",
+    "description": "Amazon purchase - updated",
+    "merchantName": "Amazon.com",
+    "transactionDate": "2024-08-14T14:20:00.000Z"
+  }
+}

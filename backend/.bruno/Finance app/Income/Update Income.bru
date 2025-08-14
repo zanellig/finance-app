@@ -1,0 +1,22 @@
+meta {
+  name: Update Income
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{url}}/api/income/123e4567-e89b-12d3-a456-426614174000
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Senior Software Engineer Salary",
+    "amount": "8500.00",
+    "frequency": "monthly",
+    "isHourly": false,
+    "startDate": "2024-01-01T00:00:00.000Z",
+    "endDate": null
+  }
+}

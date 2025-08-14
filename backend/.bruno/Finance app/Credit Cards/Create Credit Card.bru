@@ -1,0 +1,23 @@
+meta {
+  name: Create Credit Card
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{url}}/api/credit-cards
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "entityId": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "Chase Sapphire",
+    "lastFourDigits": "1234",
+    "creditLimit": "5000.00",
+    "currentBalance": "1500.00",
+    "issuer": "Chase",
+    "expirationDate": "2026-12-31T00:00:00.000Z"
+  }
+}
