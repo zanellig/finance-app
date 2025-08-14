@@ -2,12 +2,15 @@
   "name": "backend",
   "scripts": {
     "dev": "bun --hot --no-clear-screen run src/index.ts",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
     "db:push": "bun run --bun drizzle-kit push",
     "db:generate": "bun run --bun drizzle-kit generate",
     "db:migrate": "bun run --bun drizzle-kit migrate",
     "db:studio": "bun run drizzle-kit studio",
     "db:check": "bun run --bun drizzle-kit check",
-    "format:check": "prettier . --check"
+    "format:check": "prettier . --check",
+    "lint:check": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
     "@clerk/backend": "^2.6.2",
