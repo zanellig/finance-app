@@ -2,7 +2,6 @@ import { account } from "../types/accounts.types";
 
 export const getAccountDto = account.pick({
   id: true,
-  userId: true,
   entityId: true,
   name: true,
   type: true,
@@ -15,7 +14,6 @@ export const getAccountDto = account.pick({
 export const getAccountsDto = getAccountDto.array();
 
 export const createAccountDto = account.pick({
-  userId: true,
   entityId: true,
   name: true,
   type: true,
