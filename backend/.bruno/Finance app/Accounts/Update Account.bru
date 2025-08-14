@@ -1,0 +1,20 @@
+meta {
+  name: Update Account
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{url}}/api/accounts/123e4567-e89b-12d3-a456-426614174000
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Updated Savings Account",
+    "accountType": "checking",
+    "balance": "1500.00",
+    "currency": "USD"
+  }
+}

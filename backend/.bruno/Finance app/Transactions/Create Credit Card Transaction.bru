@@ -1,0 +1,21 @@
+meta {
+  name: Create Credit Card Transaction
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{url}}/api/transactions/credit-cards
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "creditCardId": "123e4567-e89b-12d3-a456-426614174000",
+    "amount": "89.99",
+    "description": "Amazon purchase",
+    "merchantName": "Amazon.com",
+    "transactionDate": "2024-08-14T14:20:00.000Z"
+  }
+}
