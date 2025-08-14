@@ -2,7 +2,6 @@ import { loan } from "../types/loans.types";
 
 export const getLoanDto = loan.pick({
   id: true,
-  userId: true,
   entityId: true,
   name: true,
   initialCapital: true,
@@ -18,7 +17,6 @@ export const getLoanDto = loan.pick({
 export const getLoansDto = getLoanDto.array();
 
 export const createLoanDto = loan.pick({
-  userId: true,
   entityId: true,
   name: true,
   initialCapital: true,
@@ -37,7 +35,6 @@ export const createLoanResponseDto = loan.pick({
 
 export const updateLoanDto = loan.pick({
   id: true,
-  userId: true,
   entityId: true,
   name: true,
   initialCapital: true,
