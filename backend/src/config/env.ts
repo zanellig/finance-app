@@ -11,7 +11,12 @@ const envSchema = z.object({
     .regex(
       /^mysql:\/\/[^:]+:[^@]+@[^:]+:\d+\/[^/]+$/,
       "Invalid MySQL URL format. Expected format: mysql://{username}:{password}@{HOST}:{PORT}/{db_name}",
-    ),
+    ).optional(),
+  DB_HOST: z.string().default("localhost"),
+  DB_PORT: z.string(),
+  DB_USER: z.string(),
+  DB_PASSWORD: z.string(),
+  DB_NAME: z.string(),
   CLERK_SECRET_KEY: z.string(),
   CLERK_PUBLISHABLE_KEY: z.string(),
 });
