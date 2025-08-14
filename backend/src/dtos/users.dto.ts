@@ -34,3 +34,15 @@ export const deleteUserDto = user.pick({
   id: true,
   status: true,
 });
+
+export const loginUserDto = user.pick({
+  email: true,
+  password: true,
+});
+
+export const loginResponseDto = user.pick({
+  id: true,
+  externalId: true,
+  name: true,
+  email: true,
+});

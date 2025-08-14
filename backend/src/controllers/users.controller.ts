@@ -4,7 +4,7 @@ import { getAuth } from "@hono/clerk-auth";
 
 import { users } from "@/models/users.model";
 
-import { createUserDto, createUserResponseDto } from "@/dtos/users.dto";
+import { createUserDto, createUserResponseDto, loginUserDto, loginResponseDto } from "@/dtos/users.dto";
 
 import { validateBody } from "@/utils/validator";
 import authService from "@/services/auth";
@@ -72,6 +72,53 @@ usersRouter.post("/register", validateBody(createUserDto), async (c) => {
   const userData = createUserResponseDto.safeParse({ ...user, ...authRes });
 
   return c.json(userData, 201);
+});
+
+usersRouter.post("/login", validateBody(loginUserDto), async (c) => {
+  const auth = getAuth(c);
+  if (auth?.isAuthenticated)
+    return c.json(
+      {
+        success: false,
+        message: "Already logged in",
+      },
+      409
+    );
+
+  const { email, password } = c.req.valid("json");
+
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email));
+
+  if (!user) {
+    return c.json({ success: false, message: "Invalid credentials" }, 401);
+  }
+
+  const passwordValid = await Bun.password.verify(password, user.passwordHash);
+  if (!passwordValid) {
+    return c.json({ success: false, message: "Invalid credentials" }, 401);
+  }
+
+  try {
+    const signInToken = await authService.signInTokens.createSignInToken({
+      userId: user.externalId!,
+      expiresInSeconds: 3600,
+    });
+
+    const userData = loginResponseDto.safeParse(user);
+    
+    return c.json({
+      success: true,
+      message: "Login successful",
+      user: userData.data,
+      token: signInToken.token,
+    }, 200);
+  } catch (error) {
+    console.error("Error creating sign-in token:", error);
+    return c.json({ success: false, message: "Login failed" }, 500);
+  }
 });
 
 export default usersRouter;
