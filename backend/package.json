@@ -1,5 +1,11 @@
 {
   "name": "backend",
+  "private": true,
+  "author": {
+    "name": "Gonzalo Zanelli",
+    "email": "gonzalozanelli1@gmail.com",
+    "url": "https://www.github.com/zanellig"
+  },
   "scripts": {
     "dev": "bun --hot --no-clear-screen run src/index.ts",
     "test": "bun test",
