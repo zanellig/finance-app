@@ -15,6 +15,7 @@ Major versions represent **breaking changes** that require user intervention, da
 ### Backend Breaking Changes
 
 #### Database Schema Changes
+
 - **Table Structure Modifications**: Adding/removing/renaming columns with `NOT NULL` constraints
 - **Primary Key Changes**: Modifying UUID generation strategy or key structure
 - **Relationship Changes**: Breaking foreign key relationships or changing cascade behaviors
@@ -22,15 +23,17 @@ Major versions represent **breaking changes** that require user intervention, da
 - **Index Changes**: Removing critical database indexes that affect query performance
 
 **Examples:**
+
 ```sql
 -- MAJOR: Breaking change - requires migration
 ALTER TABLE users ADD COLUMN required_field VARCHAR(255) NOT NULL;
 
--- MAJOR: Breaking relationship change  
+-- MAJOR: Breaking relationship change
 ALTER TABLE accounts DROP FOREIGN KEY accounts_user_id_foreign;
 ```
 
 #### API Breaking Changes
+
 - **Endpoint Removal**: Removing existing REST endpoints (`/api/users`, `/api/entities`)
 - **Request/Response Schema Changes**: Modifying Zod validation schemas in ways that break existing clients
 - **Authentication Changes**: Changing JWT token structure or auth middleware behavior
@@ -38,6 +41,7 @@ ALTER TABLE accounts DROP FOREIGN KEY accounts_user_id_foreign;
 - **Required Parameter Changes**: Making optional parameters required or vice versa
 
 **Examples:**
+
 ```typescript
 // MAJOR: Breaking DTO change
 export const createUserDto = z.object({
@@ -45,7 +49,7 @@ export const createUserDto = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   // Adding required field breaks existing API clients
-  requiredField: z.string() // ⚠️ MAJOR version required
+  requiredField: z.string(), // ⚠️ MAJOR version required
 });
 
 // MAJOR: Breaking endpoint removal
@@ -53,6 +57,7 @@ export const createUserDto = z.object({
 ```
 
 #### Framework/Runtime Breaking Changes
+
 - **Bun Runtime Version**: Major Bun version upgrades with breaking changes
 - **Hono Framework**: Breaking changes in Hono framework (v4 → v5)
 - **Drizzle ORM**: Major ORM changes affecting query syntax or schema definitions
@@ -61,32 +66,37 @@ export const createUserDto = z.object({
 ### Frontend Breaking Changes
 
 #### UI Component API Changes
+
 - **Component Props**: Removing or significantly changing component prop interfaces
 - **Component Behavior**: Fundamental changes to how components work (shadcn/ui breaking changes)
 - **Export Changes**: Removing or renaming exported functions/components from shared modules
 
 **Examples:**
+
 ```typescript
 // MAJOR: Breaking component prop change
 interface ButtonProps {
   // Removing 'size' prop breaks existing usage
   // size?: 'sm' | 'md' | 'lg' // ⚠️ MAJOR version required
-  variant?: 'default' | 'destructive'
+  variant?: "default" | "destructive";
 }
 ```
 
 #### Framework Breaking Changes
+
 - **Next.js Major Versions**: Next.js 15 → 16 with breaking changes
-- **React Major Versions**: React 19 → 20 with breaking changes  
+- **React Major Versions**: React 19 → 20 with breaking changes
 - **Build System Changes**: Switching bundlers or major build configuration changes
 - **Routing Changes**: App Router structural changes that break existing navigation
 
 #### Theme/Design System Changes
+
 - **CSS Variable Removal**: Removing core CSS custom properties used throughout the app
 - **Design Token Changes**: Breaking changes to design system tokens (colors, spacing)
 - **Layout Breaking Changes**: Modifications that fundamentally change app layout structure
 
 ### Infrastructure Breaking Changes
+
 - **Environment Variables**: Removing required environment variables or changing their format
 - **Docker Configuration**: Breaking changes to containerization that require infrastructure updates
 - **Deployment Changes**: Modifications requiring infrastructure reconfiguration
@@ -100,12 +110,14 @@ Minor versions represent **new features** and **enhancements** that are backward
 ### Backend New Features
 
 #### New API Endpoints
+
 - **Resource Endpoints**: Adding new REST endpoints for entities (`GET /api/budgets`, `POST /api/reports`)
 - **CRUD Operations**: Adding new CRUD operations for existing resources
 - **Query Parameters**: Adding optional query parameters for filtering, sorting, pagination
 - **Response Enhancement**: Adding optional fields to response schemas (backward-compatible)
 
 **Examples:**
+
 ```typescript
 // MINOR: New optional endpoint
 budgetsRouter.get("/monthly", async (c) => {
@@ -115,19 +127,21 @@ budgetsRouter.get("/monthly", async (c) => {
 // MINOR: Adding optional response field
 export const userResponseDto = z.object({
   id: z.string(),
-  name: z.string(), 
+  name: z.string(),
   email: z.string(),
-  lastLoginAt: z.string().optional() // New optional field
+  lastLoginAt: z.string().optional(), // New optional field
 });
 ```
 
 #### Database Enhancements
+
 - **New Tables**: Adding entirely new tables for new features (`budgets`, `categories`, `reports`)
 - **Optional Columns**: Adding nullable columns to existing tables
 - **New Indexes**: Adding performance-enhancing database indexes
 - **New Relationships**: Creating new foreign key relationships without breaking existing ones
 
 **Examples:**
+
 ```sql
 -- MINOR: New table for new feature
 CREATE TABLE budgets (
@@ -143,6 +157,7 @@ ALTER TABLE users ADD COLUMN last_login_at TIMESTAMP NULL;
 ```
 
 #### Business Logic Enhancements
+
 - **New Services**: Adding new service modules (`budgetService`, `reportService`)
 - **Enhanced Validation**: Adding more sophisticated validation rules to existing DTOs
 - **New Middleware**: Adding optional middleware for logging, analytics, etc.
@@ -151,11 +166,13 @@ ALTER TABLE users ADD COLUMN last_login_at TIMESTAMP NULL;
 ### Frontend New Features
 
 #### New UI Components
+
 - **shadcn/ui Components**: Adding new UI components to the design system
 - **Business Components**: Creating new business-specific components (`BudgetCard`, `TransactionTable`)
 - **Layout Components**: Adding new layout patterns or page templates
 
 **Examples:**
+
 ```typescript
 // MINOR: New UI component
 export function BudgetOverview({ budget }: { budget: Budget }) {
@@ -169,17 +186,20 @@ export function SocialAuthButtons() {
 ```
 
 #### Page/Route Additions
+
 - **New Pages**: Adding new application pages (`/budgets`, `/reports`, `/analytics`)
 - **Page Enhancements**: Adding new sections or features to existing pages
 - **Navigation Updates**: Adding new navigation items for new features
 
 #### Functionality Enhancements
+
 - **Form Enhancements**: Adding new form fields or validation to existing forms
 - **State Management**: Extending React Query queries or auth context functionality
 - **Theme Enhancements**: Adding new theme variants or customization options
 - **Accessibility**: Improving accessibility features without breaking existing behavior
 
 ### Development Experience
+
 - **Build Optimizations**: Performance improvements to build processes
 - **Development Tools**: Adding new development scripts or tools
 - **Testing Infrastructure**: Adding new test utilities or test coverage
@@ -194,12 +214,14 @@ Patch versions represent **bug fixes**, **security updates**, and **minor improv
 ### Bug Fixes
 
 #### Backend Bug Fixes
+
 - **API Fixes**: Correcting incorrect HTTP status codes, fixing response formatting
 - **Business Logic Fixes**: Fixing calculation errors, validation bugs, or data processing issues
 - **Database Fixes**: Correcting query performance issues, fixing data integrity problems
 - **Security Fixes**: Patching security vulnerabilities, updating dependencies with CVE fixes
 
 **Examples:**
+
 ```typescript
 // PATCH: Fix incorrect HTTP status
 if (!user) {
@@ -210,17 +232,19 @@ if (!user) {
 // PATCH: Fix validation bug
 export const createTransactionDto = z.object({
   // Fixed: amount should allow negative values for debits
-  amount: z.number() // was z.number().positive()
+  amount: z.number(), // was z.number().positive()
 });
 ```
 
 #### Frontend Bug Fixes
+
 - **UI Fixes**: Correcting component rendering issues, styling bugs, responsive design problems
 - **Form Fixes**: Fixing form validation, submission errors, or user input handling
 - **State Fixes**: Correcting React state management issues, fixing re-rendering problems
 - **Accessibility Fixes**: Improving screen reader support, keyboard navigation, focus management
 
 **Examples:**
+
 ```typescript
 // PATCH: Fix button disabled state
 <AuthSubmitButton
@@ -230,22 +254,25 @@ export const createTransactionDto = z.object({
   Register
 </AuthSubmitButton>
 
-// PATCH: Fix responsive design issue  
+// PATCH: Fix responsive design issue
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"> // Fixed: was missing lg breakpoint
 ```
 
 ### Performance Improvements
+
 - **Query Optimizations**: Improving database query performance without changing APIs
 - **Bundle Size**: Optimizing JavaScript bundle size, removing unused dependencies
 - **Rendering Performance**: Optimizing React component re-rendering, memoization improvements
 - **Load Time**: Improving initial page load times, optimizing asset loading
 
 ### Dependency Updates
+
 - **Security Updates**: Updating dependencies to patch security vulnerabilities
 - **Bug Fix Updates**: Updating to dependency patch versions that fix bugs
 - **Maintenance Updates**: Routine dependency updates that don't change functionality
 
 **Examples:**
+
 ```json
 // PATCH: Security dependency update
 {
@@ -256,12 +283,14 @@ export const createTransactionDto = z.object({
 ```
 
 ### Code Quality Improvements
+
 - **Refactoring**: Internal code improvements that don't change external behavior
 - **Type Safety**: Improving TypeScript types without changing runtime behavior
 - **Error Handling**: Better error messages, improved error logging
 - **Code Organization**: Moving files, improving imports, cleaning up unused code
 
 ### Documentation Updates
+
 - **README Updates**: Correcting setup instructions, fixing broken links
 - **Comment Updates**: Improving code comments, fixing typos in documentation
 - **API Documentation**: Correcting API documentation inconsistencies
@@ -272,20 +301,20 @@ export const createTransactionDto = z.object({
 
 Use this matrix to determine the appropriate version bump:
 
-| Change Type | Database | API | Frontend | Infrastructure | Version |
-|-------------|----------|-----|----------|----------------|---------|
-| Breaking schema change | ✅ | ❌ | ❌ | ❌ | **MAJOR** |
-| Remove API endpoint | ❌ | ✅ | ❌ | ❌ | **MAJOR** |
-| Change component props | ❌ | ❌ | ✅ | ❌ | **MAJOR** |
-| Remove env variable | ❌ | ❌ | ❌ | ✅ | **MAJOR** |
-| Add new table | ✅ | ❌ | ❌ | ❌ | **MINOR** |
-| Add new endpoint | ❌ | ✅ | ❌ | ❌ | **MINOR** |
-| Add new page | ❌ | ❌ | ✅ | ❌ | **MINOR** |
-| Add optional env variable | ❌ | ❌ | ❌ | ✅ | **MINOR** |
-| Fix query bug | ✅ | ❌ | ❌ | ❌ | **PATCH** |
-| Fix status code | ❌ | ✅ | ❌ | ❌ | **PATCH** |
-| Fix UI bug | ❌ | ❌ | ✅ | ❌ | **PATCH** |
-| Update dependencies | ❌ | ❌ | ❌ | ✅ | **PATCH** |
+| Change Type               | Database | API | Frontend | Infrastructure | Version   |
+| ------------------------- | -------- | --- | -------- | -------------- | --------- |
+| Breaking schema change    | ✅       | ❌  | ❌       | ❌             | **MAJOR** |
+| Remove API endpoint       | ❌       | ✅  | ❌       | ❌             | **MAJOR** |
+| Change component props    | ❌       | ❌  | ✅       | ❌             | **MAJOR** |
+| Remove env variable       | ❌       | ❌  | ❌       | ✅             | **MAJOR** |
+| Add new table             | ✅       | ❌  | ❌       | ❌             | **MINOR** |
+| Add new endpoint          | ❌       | ✅  | ❌       | ❌             | **MINOR** |
+| Add new page              | ❌       | ❌  | ✅       | ❌             | **MINOR** |
+| Add optional env variable | ❌       | ❌  | ❌       | ✅             | **MINOR** |
+| Fix query bug             | ✅       | ❌  | ❌       | ❌             | **PATCH** |
+| Fix status code           | ❌       | ✅  | ❌       | ❌             | **PATCH** |
+| Fix UI bug                | ❌       | ❌  | ✅       | ❌             | **PATCH** |
+| Update dependencies       | ❌       | ❌  | ❌       | ✅             | **PATCH** |
 
 ---
 
@@ -296,28 +325,31 @@ Use this matrix to determine the appropriate version bump:
 Before determining version type, AI agents should analyze:
 
 1. **Database Impact Analysis**:
+
    ```bash
    # Check for schema changes
    pnpm --dir backend db:check
-   
+
    # Review migration files
    ls backend/drizzle/migrations/
    ```
 
 2. **API Compatibility Check**:
+
    ```bash
    # Examine DTO changes
    git diff HEAD~1 backend/src/dtos/
-   
+
    # Check controller modifications
    git diff HEAD~1 backend/src/controllers/
    ```
 
 3. **Frontend Breaking Changes**:
+
    ```bash
    # Review component prop changes
    git diff HEAD~1 frontend/src/components/
-   
+
    # Check for removed exports
    grep -r "export" frontend/src/components/ui/
    ```
@@ -344,6 +376,7 @@ git push origin main --tags
 ### Commit Message Templates
 
 **MAJOR Version:**
+
 ```
 BREAKING CHANGE: [description]
 
@@ -357,6 +390,7 @@ BREAKING CHANGES:
 ```
 
 **MINOR Version:**
+
 ```
 feat: add budget management functionality
 
@@ -367,6 +401,7 @@ feat: add budget management functionality
 ```
 
 **PATCH Version:**
+
 ```
 fix: resolve transaction calculation error
 
@@ -378,6 +413,7 @@ fix: resolve transaction calculation error
 ### Testing Requirements by Version Type
 
 **MAJOR Version Requirements:**
+
 - [ ] All existing API endpoints return expected responses
 - [ ] Database migrations run successfully
 - [ ] Backward compatibility tests pass (if applicable)
@@ -385,6 +421,7 @@ fix: resolve transaction calculation error
 - [ ] Update documentation and migration guides
 
 **MINOR Version Requirements:**
+
 - [ ] New features work as expected
 - [ ] Existing functionality remains unchanged
 - [ ] New API endpoints have proper validation
@@ -392,6 +429,7 @@ fix: resolve transaction calculation error
 - [ ] Performance impact is acceptable
 
 **PATCH Version Requirements:**
+
 - [ ] Bug fix resolves the reported issue
 - [ ] No regressions introduced
 - [ ] Affected functionality tested
@@ -399,56 +437,68 @@ fix: resolve transaction calculation error
 
 ### Release Notes Template
 
-```markdown
+````markdown
 # Release Notes - v1.2.3
 
 ## 🚀 New Features (MINOR)
+
 - Added budget management system
 - Implemented transaction categorization
 - Enhanced user profile settings
 
-## 🐛 Bug Fixes (PATCH)  
+## 🐛 Bug Fixes (PATCH)
+
 - Fixed transaction amount calculation precision
 - Resolved authentication token expiration handling
 - Corrected responsive design issues on mobile
 
 ## 💥 Breaking Changes (MAJOR)
+
 - Removed legacy authentication endpoints
 - Updated user profile data structure
 - Changed database schema for improved performance
 
 ## 🔄 Database Migrations
+
 Run the following commands to update your database:
+
 ```bash
 cd backend && pnpm db:migrate
 ```
+````
 
 ## 📦 Dependencies
+
 - Updated React to v19.1.0
 - Security patch for jsonwebtoken
 - Updated Tailwind CSS to v4.0
-```
 
 ---
 
 ## Emergency Versioning Scenarios
 
 ### Critical Security Patches
+
 For critical security vulnerabilities:
+
 1. **Immediate PATCH release** with security fix
 2. Skip normal testing cycles if necessary
 3. Coordinate with deployment team for urgent rollout
 4. Create detailed security advisory
 
 ### Hotfixes
+
 For critical production bugs:
+
 1. Create hotfix branch from latest release tag
 2. Apply minimal fix with thorough testing
 3. Release as PATCH version
 4. Merge back to main branch
 
 ### Rollback Strategy
+
 If a release causes issues:
+
 1. **PATCH**: Can typically be rolled back with minimal impact
 2. **MINOR**: May require careful rollback due to new database tables
 3. **MAJOR**: Requires full rollback strategy including database restoration
@@ -458,6 +508,7 @@ If a release causes issues:
 ## Conclusion
 
 This versioning framework ensures that:
+
 - **Developers** understand the impact of their changes
 - **AI Agents** can make consistent versioning decisions
 - **Users** know what to expect from each update
