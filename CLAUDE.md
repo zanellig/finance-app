@@ -1,0 +1,135 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Development Commands
+
+### Installation and Setup
+
+```bash
+# Install all dependencies for both frontend and backend
+pnpm install
+
+# Install backend only
+pnpm install:backend
+
+# Install frontend only
+pnpm install:frontend
+```
+
+### Running the Application
+
+```bash
+# Start both frontend and backend in development mode
+pnpm dev
+
+# Start backend only (Hono API on Bun)
+pnpm dev:backend
+
+# Start frontend only (Next.js)
+pnpm dev:frontend
+```
+
+### Backend Development
+
+```bash
+# Run tests
+cd backend && bun test
+
+# Watch tests
+cd backend && bun test --watch
+
+# Database operations
+cd backend && pnpm db:push      # Push schema changes
+cd backend && pnpm db:generate  # Generate migrations
+cd backend && pnpm db:migrate   # Run migrations
+cd backend && pnpm db:studio    # Open Drizzle Studio
+cd backend && pnpm db:check     # Check schema consistency
+
+# Code quality
+cd backend && pnpm lint:check   # ESLint check
+cd backend && pnpm format:check # Prettier check
+```
+
+### Frontend Development
+
+```bash
+# Build production version
+cd frontend && pnpm build
+
+# Start production server
+cd frontend && pnpm start
+
+# Lint check
+cd frontend && pnpm lint
+```
+
+## Architecture Overview
+
+### Technology Stack
+
+- **Monorepo**: Root package.json with workspace configuration
+- **Backend**: Bun runtime with Hono framework, MySQL + Drizzle ORM
+- **Frontend**: Next.js 15 with React 19, Tailwind CSS, shadcn/ui
+- **Authentication**: Custom JWT-based authentication with jsonwebtoken
+- **Package Manager**: pnpm (required - see global CLAUDE.md)
+
+### Project Structure
+
+```
+finance-tracker/
+├── backend/               # Hono API server
+│   ├── src/
+│   │   ├── config/       # Environment configuration
+│   │   ├── controllers/  # HTTP route handlers
+│   │   ├── dtos/         # Zod validation schemas
+│   │   ├── middleware/   # Auth and request middleware
+│   │   ├── models/       # Drizzle ORM table definitions
+│   │   ├── services/     # Database and business logic
+│   │   ├── types/        # TypeScript type definitions
+│   │   └── utils/        # Utility functions
+│   └── drizzle/          # Database migration files
+├── frontend/             # Next.js application
+│   └── src/
+│       ├── app/          # Next.js App Router pages
+│       ├── components/   # React components (auth + ui)
+│       ├── contexts/     # React contexts (auth)
+│       └── lib/          # Utilities and API client
+└── docs/                 # Documentation
+```
+
+### Key Patterns
+
+1. **Monorepo Structure**: Root workspace with concurrent development scripts for both apps
+
+2. **API Design**: RESTful endpoints under `/api` base path with auth middleware on protected routes
+
+3. **Database Schema**:
+
+   - Snake_case naming convention
+   - UUID primary keys with v4() generation
+   - Entity-based relationships: users → entities → accounts/cards/loans
+   - Drizzle ORM with MySQL backend
+
+4. **Validation**: Zod schemas in DTOs for request/response validation with `validateBody` middleware
+
+5. **Authentication**: Custom JWT service with Bearer token validation on protected routes
+
+6. **Frontend State**: React Query for server state, Context API for auth state
+
+### Important Notes
+
+1. **Controller Refactoring**: Current Rails-style controllers need refactoring to Hono's recommended route grouping pattern (see backend/src/index.ts:25-43)
+
+2. **Environment Requirements**:
+
+   - Backend requires `MYSQL_URL` and `JWT_SECRET` (min 32 chars)
+   - Frontend currently has Clerk env vars but uses custom auth context
+
+3. **Development Workflow**:
+
+   - Always use pnpm (global requirement)
+   - Run linting after code changes
+   - Use concurrent development mode for full-stack development
+
+4. **Testing**: Backend uses Bun's built-in test runner with watch mode available
