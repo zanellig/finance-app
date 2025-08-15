@@ -1,6 +1,11 @@
 {
   "name": "finance-tracker",
   "private": true,
+  "author": {
+    "name": "Gonzalo Zanelli",
+    "email": "gonzalozanelli1@gmail.com",
+    "url": "https://www.github.com/zanellig"
+  },
   "scripts": {
     "dev": "concurrently \"cd backend && pnpm dev\" \"cd frontend && pnpm dev\"",
     "dev:backend": "cd backend && pnpm dev",
@@ -8,7 +13,7 @@
     "install": "concurrently \"cd backend && pnpm install\" \"cd frontend && pnpm install\"",
     "install:backend": "cd backend && pnpm install",
     "install:frontend": "cd frontend && pnpm install"
-    },
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }

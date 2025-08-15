@@ -2,6 +2,11 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Gonzalo Zanelli",
+    "email": "gonzalozanelli1@gmail.com",
+    "url": "https://www.github.com/zanellig"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
