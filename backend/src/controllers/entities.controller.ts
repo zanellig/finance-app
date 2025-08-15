@@ -1,9 +1,7 @@
 import { Hono } from "hono";
 import db from "@/services/db";
-import { getAuth } from "@hono/clerk-auth";
 
 import { entities } from "@/models/entities.model";
-import { users } from "@/models/users.model";
 import { eq, and } from "drizzle-orm";
 
 import {
@@ -19,18 +17,7 @@ const entitiesRouter = new Hono().basePath("/entities");
 
 // Get all entities for the authenticated user
 entitiesRouter.get("/", async (c) => {
-  const auth = getAuth(c);
-  
-  if (!auth?.userId) {
-    return c.json({ error: "Unauthorized" }, 401);
-  }
-
-  // Get user from database using Clerk userId
-  const [user] = await db.select().from(users).where(eq(users.externalId, auth.userId));
-  
-  if (!user) {
-    return c.json({ error: "User not found" }, 404);
-  }
+  const user = c.get("user");
 
   const entitiesRes = await db
     .select()
@@ -43,22 +30,11 @@ entitiesRouter.get("/", async (c) => {
 
 // Get specific entity for the authenticated user
 entitiesRouter.get("/:id", async (c) => {
-  const auth = getAuth(c);
+  const user = c.get("user");
   const entityId = c.req.param("id");
   
-  if (!auth?.userId) {
-    return c.json({ error: "Unauthorized" }, 401);
-  }
-
   if (!entityId) {
     return c.json({ error: "Entity ID required" }, 400);
-  }
-
-  // Get user from database using Clerk userId
-  const [user] = await db.select().from(users).where(eq(users.externalId, auth.userId));
-  
-  if (!user) {
-    return c.json({ error: "User not found" }, 404);
   }
 
   const [entityRes] = await db
@@ -76,41 +52,20 @@ entitiesRouter.get("/:id", async (c) => {
 
 // Create new entity for the authenticated user
 entitiesRouter.post("/", validateBody(createEntityDto), async (c) => {
-  const auth = getAuth(c);
-  
-  if (!auth?.userId) {
-    return c.json({ error: "Unauthorized" }, 401);
-  }
+  const user = c.get("user");
+  const { name, type } = c.req.valid("json");
 
-  const { name } = c.req.valid("json");
-
-  // Get user from database using Clerk userId
-  const [user] = await db.select().from(users).where(eq(users.externalId, auth.userId));
-  
-  if (!user) {
-    return c.json({ error: "User not found" }, 404);
-  }
-
-  // Check if entity with same name already exists for this user
-  const [existingEntity] = await db
-    .select({ id: entities.id })
-    .from(entities)
-    .where(and(eq(entities.name, name), eq(entities.userId, user.id)));
-
-  if (existingEntity) {
-    return c.json(
-      { error: "Entity already exists", data: existingEntity },
-      409
-    );
-  }
-
-  const [res] = await db
+  const [entityRes] = await db
     .insert(entities)
-    .values({ userId: user.id, name })
+    .values({
+      name,
+      type,
+      userId: user.id,
+    })
     .$returningId();
 
-  const responseDto = createEntityResponseDto.safeParse(res);
-  return c.json(responseDto.data, 201);
+  const entityDto = createEntityResponseDto.safeParse(entityRes);
+  return c.json(entityDto.data, entityDto.success ? 201 : 500);
 });
 
 export default entitiesRouter;
