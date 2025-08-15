@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import db from "@/services/db";
-import { getAuth } from "@hono/clerk-auth";
+
 
 import { transactions, creditCardTransactions } from "@/models/transactions.model";
 import { accounts } from "@/models/accounts.model";

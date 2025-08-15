@@ -1,12 +1,14 @@
 // --- Core ---
 import { Hono } from "hono";
-import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 
 import { etag } from "hono/etag";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
 import { trimTrailingSlash } from "hono/trailing-slash";
 import { compress } from "@hono/bun-compress";
+
+// --- Middleware ---
+import { authMiddleware } from "@/middleware/auth";
 
 // --- Controllers ---
 import usersRouter from "@/controllers/users.controller";
@@ -18,7 +20,6 @@ import incomeRouter from "@/controllers/income.controller";
 import transactionsRouter from "@/controllers/transactions.controller";
 
 // --- Utils ---
-import { env } from "@/config/env";
 
 /**
  * This way of writing Rails-like controllers is not recommended in the Hono docs.
@@ -48,13 +49,13 @@ app.use("*", cors());
 app.use(trimTrailingSlash());
 app.use(compress());
 
-app.use(
-  "*",
-  clerkMiddleware({
-    secretKey: env.CLERK_SECRET_KEY,
-    publishableKey: env.CLERK_PUBLISHABLE_KEY,
-  }),
-);
+// Apply auth middleware to protected routes
+app.use("/entities/*", authMiddleware);
+app.use("/accounts/*", authMiddleware);
+app.use("/credit-cards/*", authMiddleware);
+app.use("/loans/*", authMiddleware);
+app.use("/income/*", authMiddleware);
+app.use("/transactions/*", authMiddleware);
 
 app.route("/", usersRouter);
 app.route("/", entitiesRouter);
@@ -64,18 +65,12 @@ app.route("/", loansRouter);
 app.route("/", incomeRouter);
 app.route("/", transactionsRouter);
 
-app.get("/clerk", async (c) => {
-  const auth = getAuth(c);
-
-  if (!auth?.userId) {
-    return c.json({
-      message: "You are not logged in.",
-    });
-  }
+app.get("/auth/me", authMiddleware, async (c) => {
+  const user = c.get("user");
 
   return c.json({
     message: "You are logged in!",
-    userId: auth.userId,
+    user,
   });
 });
 
