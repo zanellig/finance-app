@@ -22,7 +22,7 @@ app.post("/users/register", async (c) => {
       lastName: body.lastName,
       email: body.email
     }, 201);
-  } catch (error) {
+  } catch {
     return c.json({ error: "Invalid JSON" }, 400);
   }
 });
@@ -79,7 +79,7 @@ app.post("/entities", async (c) => {
     }
     
     return c.json({ id: "new-entity-id" }, 201);
-  } catch (error) {
+  } catch {
     return c.json({ error: "Invalid JSON" }, 400);
   }
 });
@@ -138,7 +138,7 @@ app.post("/accounts", async (c) => {
     }
     
     return c.json({ id: "new-account-id" }, 201);
-  } catch (error) {
+  } catch {
     return c.json({ error: "Invalid JSON" }, 400);
   }
 });
