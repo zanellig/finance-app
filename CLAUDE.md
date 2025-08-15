@@ -133,3 +133,27 @@ finance-tracker/
    - Use concurrent development mode for full-stack development
 
 4. **Testing**: Backend uses Bun's built-in test runner with watch mode available
+
+## Versioning
+
+**IMPORTANT**: This project follows semantic versioning (semver) guidelines. Before making any changes that affect versioning, consult the comprehensive versioning framework documented in `VERSIONING.md`.
+
+### Versioning Commands
+
+```bash
+# Update version in frontend package.json
+cd frontend && npm version [major|minor|patch]
+
+# Create git tag for release
+git tag -a v1.2.3 -m "Release version 1.2.3"
+
+# Push version and tags
+git push origin main --tags
+```
+
+**Version Decision Guidelines:**
+- **MAJOR (X.0.0)**: Breaking database schema changes, removed API endpoints, breaking component changes
+- **MINOR (x.Y.0)**: New features, new endpoints, new UI components, new database tables
+- **PATCH (x.y.Z)**: Bug fixes, security updates, dependency updates, performance improvements
+
+**Always reference VERSIONING.md for detailed decision criteria and AI agent implementation guidelines.**
