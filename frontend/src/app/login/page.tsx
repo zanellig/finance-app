@@ -57,9 +57,11 @@ export default function LoginPage() {
             <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-xl mb-3 mx-auto">
               <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Welcome back</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+              Bienvenido de nuevo
+            </h1>
             <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-              Sign in to your Finance Tracker account
+              Ingresá a tu cuenta de Finar para continuar
             </p>
           </div>
 
@@ -69,7 +71,9 @@ export default function LoginPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {error && (
                   <Alert variant="destructive" className="py-2">
-                    <AlertDescription className="text-sm">{error}</AlertDescription>
+                    <AlertDescription className="text-sm">
+                      {error}
+                    </AlertDescription>
                   </Alert>
                 )}
 
@@ -164,7 +168,10 @@ export default function LoginPage() {
               {/* Sign up link */}
               <div className="text-center">
                 <Link href="/register">
-                  <Button variant="outline" className="w-full h-10 sm:h-11 font-medium text-sm sm:text-base">
+                  <Button
+                    variant="outline"
+                    className="w-full h-10 sm:h-11 font-medium text-sm sm:text-base"
+                  >
                     Create an account
                   </Button>
                 </Link>
@@ -189,7 +196,7 @@ export default function LoginPage() {
       {/* Right side - Illustration/Background */}
       <div className="hidden lg:flex lg:flex-1 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,theme(colors.primary/20),transparent_70%)]" />
-        
+
         {/* Floating elements */}
         <div className="relative w-full flex items-center justify-center p-8">
           <div className="space-y-6 text-center max-w-sm">
@@ -202,7 +209,7 @@ export default function LoginPage() {
                 with our powerful finance tracker.
               </p>
             </div>
-            
+
             {/* Feature highlights */}
             <div className="space-y-3 text-left">
               <div className="flex items-center space-x-3 text-sm">
