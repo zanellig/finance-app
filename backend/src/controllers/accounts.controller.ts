@@ -5,7 +5,7 @@ import db from "@/services/db";
 import { accounts } from "@/models/accounts.model";
 import { entities } from "@/models/entities.model";
 import { users } from "@/models/users.model";
-import { eq, and } from "drizzle-orm";
+import { eq, and, ne } from "drizzle-orm";
 
 import {
   createAccountDto,
@@ -39,7 +39,7 @@ accountsRouter.get("/", async (c) => {
     .select()
     .from(accounts)
     .innerJoin(entities, eq(accounts.entityId, entities.id))
-    .where(eq(entities.userId, user.id));
+    .where(and(eq(entities.userId, user.id), ne(accounts.status, "deleted"), ne(entities.status, "deleted")));
     
   const accountsDto = getAccountsDto.safeParse(accountsRes.map(result => result.accounts));
   return c.json(accountsDto.data || [], accountsDto.success ? 200 : 500);
@@ -70,7 +70,7 @@ accountsRouter.get("/:id", async (c) => {
     .select()
     .from(accounts)
     .innerJoin(entities, eq(accounts.entityId, entities.id))
-    .where(and(eq(accounts.id, accountId), eq(entities.userId, user.id)));
+    .where(and(eq(accounts.id, accountId), eq(entities.userId, user.id), ne(accounts.status, "deleted"), ne(entities.status, "deleted")));
 
   if (!accountRes) {
     return c.json({ error: "Account not found" }, 404);
@@ -201,7 +201,10 @@ accountsRouter.delete("/:id", async (c) => {
     return c.json({ error: "Account not found or access denied" }, 403);
   }
 
-  await db.delete(accounts).where(eq(accounts.id, accountId));
+  await db.update(accounts).set({
+    status: "deleted",
+    deletedAt: new Date()
+  }).where(eq(accounts.id, accountId));
 
   return c.json({ success: true }, 200);
 });

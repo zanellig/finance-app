@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import db from "@/services/db";
 
 import { entities } from "@/models/entities.model";
-import { eq, and } from "drizzle-orm";
+import { eq, and, ne } from "drizzle-orm";
 
 import {
   createEntityDto,
@@ -22,7 +22,7 @@ entitiesRouter.get("/", async (c) => {
   const entitiesRes = await db
     .select()
     .from(entities)
-    .where(eq(entities.userId, user.id));
+    .where(and(eq(entities.userId, user.id), ne(entities.status, "deleted")));
     
   const entitiesDto = getEntitiesDto.safeParse(entitiesRes);
   return c.json(entitiesDto.data || [], entitiesDto.success ? 200 : 500);
@@ -40,7 +40,7 @@ entitiesRouter.get("/:id", async (c) => {
   const [entityRes] = await db
     .select()
     .from(entities)
-    .where(and(eq(entities.id, entityId), eq(entities.userId, user.id)));
+    .where(and(eq(entities.id, entityId), eq(entities.userId, user.id), ne(entities.status, "deleted")));
 
   if (!entityRes) {
     return c.json({ error: "Entity not found" }, 404);

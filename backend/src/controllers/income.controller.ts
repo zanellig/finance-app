@@ -196,7 +196,10 @@ incomeRouter.delete("/:id", async (c) => {
     return c.json({ error: "Income not found or access denied" }, 403);
   }
 
-  await db.delete(income).where(eq(income.id, incomeId));
+  await db.update(income).set({
+    status: "deleted",
+    deletedAt: new Date()
+  }).where(eq(income.id, incomeId));
 
   return c.json({ success: true }, 200);
 });
