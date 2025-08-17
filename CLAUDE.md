@@ -157,3 +157,59 @@ git push origin main --tags
 - **PATCH (x.y.Z)**: Bug fixes, security updates, dependency updates, performance improvements
 
 **Always reference VERSIONING.md for detailed decision criteria and AI agent implementation guidelines.**
+
+## Critical Development Rules
+
+### Database Operations
+
+**NEVER use `db.delete()` for any operations.** All deletions must be soft deletes using the following pattern:
+
+```typescript
+// ✅ CORRECT: Soft delete
+await db.update(tableName).set({
+  status: "deleted",
+  deletedAt: new Date()
+}).where(eq(tableName.id, id));
+
+// ❌ WRONG: Hard delete - NEVER DO THIS
+await db.delete(tableName).where(eq(tableName.id, id));
+```
+
+**All models must have soft delete fields:**
+- `status: mysqlEnum(["active", "inactive", "deleted"]).default("active")`
+- `deletedAt: timestamp("deleted_at")` (included in `defaultTimestamps`)
+
+**Rationale:** Soft deletes preserve data integrity, enable audit trails, and allow for data recovery. Hard deletes are irreversible and can cause referential integrity issues.
+
+### Query Filtering for Soft Deletes
+
+**All SELECT queries must filter out soft-deleted records** using the following patterns:
+
+```typescript
+// ✅ CORRECT: Single table with soft delete
+await db.select().from(tableName).where(and(
+  eq(tableName.userId, user.id),
+  ne(tableName.status, "deleted")
+));
+
+// ✅ CORRECT: Join with multiple tables having soft delete
+await db.select()
+  .from(accounts)
+  .innerJoin(entities, eq(accounts.entityId, entities.id))
+  .where(and(
+    eq(entities.userId, user.id),
+    ne(accounts.status, "deleted"),
+    ne(entities.status, "deleted")
+  ));
+
+// ✅ CORRECT: Credit card transactions (use recordStatus)
+await db.select().from(creditCardTransactions).where(and(
+  eq(creditCardTransactions.creditCardId, cardId),
+  ne(creditCardTransactions.recordStatus, "deleted")
+));
+```
+
+**Required imports:** Add `ne` (not equal) to drizzle-orm imports:
+```typescript
+import { eq, and, ne } from "drizzle-orm";
+```
