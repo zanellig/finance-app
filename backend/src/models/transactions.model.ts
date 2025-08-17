@@ -20,6 +20,7 @@ export const creditCardTransactions = mysqlTable("credit_card_transactions", {
   creditCardId: varchar("credit_card_id", { length: 36 })
     .references(() => creditCards.id, noActionCascade)
     .notNull(),
+  recordStatus: mysqlEnum("record_status", ["active", "inactive", "deleted"]).default("active"),
   status: mysqlEnum(["approved", "declined", "pending", "refunded"]).default(
     "pending",
   ),
@@ -39,6 +40,7 @@ export const transactions = mysqlTable("transactions", {
     () => users.id,
     noActionCascade,
   ),
+  status: mysqlEnum(["active", "inactive", "deleted"]).default("active"),
   fromAccountId: varchar("from_account_id", { length: 36 })
     .references(() => accounts.id, noActionCascade)
     .notNull(),

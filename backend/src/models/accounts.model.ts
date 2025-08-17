@@ -17,6 +17,7 @@ export const accounts = mysqlTable("accounts", {
   entityId: varchar("entity_id", { length: 36 })
     .references(() => entities.id, cascadeCascade)
     .notNull(),
+  status: mysqlEnum(["active", "inactive", "deleted"]).default("active"),
   name: varchar({ length: 255 }).notNull().unique(),
   type: mysqlEnum(["savings", "checking", "interest_bearing"]).notNull(),
   balance: decimal({ precision: 2, unsigned: false }).notNull().default("0.00"),

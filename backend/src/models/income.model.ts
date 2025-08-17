@@ -18,6 +18,7 @@ export const income = mysqlTable("income", {
     () => users.id,
     noActionCascade,
   ),
+  status: mysqlEnum(["active", "inactive", "deleted"]).default("active"),
   name: varchar({ length: 255 }),
   amount: decimal({
     precision: 2,
