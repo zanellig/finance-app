@@ -49,12 +49,15 @@ usersRouter.post("/register", validateBody(createUserDto), async (c) => {
     email,
   });
 
-  return c.json({
-    success: true,
-    message: "User created successfully",
-    user: userData.data,
-    token,
-  }, 201);
+  return c.json(
+    {
+      success: true,
+      message: "User created successfully",
+      user: userData.data,
+      token,
+    },
+    201
+  );
 });
 
 usersRouter.post("/login", validateBody(loginUserDto), async (c) => {

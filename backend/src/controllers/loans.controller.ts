@@ -1,11 +1,9 @@
 import { Hono } from "hono";
 import db from "@/services/db";
 
-
 import { loans } from "@/models/loans.model";
 import { entities } from "@/models/entities.model";
-import { users } from "@/models/users.model";
-import { eq, and } from "drizzle-orm";
+import { eq, and, ne } from "drizzle-orm";
 
 import {
   createLoanDto,
@@ -17,52 +15,40 @@ import {
 
 import { validateBody } from "@/utils/validator";
 
-const loansRouter = new Hono().basePath("/loans");
+const loansRouter = new Hono<{
+  Variables: { user: { id: string; email: string; name: string } };
+}>().basePath("/loans");
 
 // Get all loans for the authenticated user
 loansRouter.get("/", async (c) => {
-  const auth = getAuth(c);
-  
-  if (!auth?.userId) {
-    return c.json({ error: "Unauthorized" }, 401);
-  }
-
-  // Get user from database using Clerk userId
-  const [user] = await db.select().from(users).where(eq(users.externalId, auth.userId));
-  
-  if (!user) {
-    return c.json({ error: "User not found" }, 404);
-  }
+  const user = c.get("user");
 
   // Get all loans for entities owned by the user
   const loansRes = await db
     .select()
     .from(loans)
     .innerJoin(entities, eq(loans.entityId, entities.id))
-    .where(eq(entities.userId, user.id));
-    
-  const loansDto = getLoansDto.safeParse(loansRes.map(result => result.loans));
+    .where(
+      and(
+        eq(entities.userId, user.id),
+        ne(loans.status, "deleted"),
+        ne(entities.status, "deleted")
+      )
+    );
+
+  const loansDto = getLoansDto.safeParse(
+    loansRes.map((result) => result.loans)
+  );
   return c.json(loansDto.data || [], loansDto.success ? 200 : 500);
 });
 
 // Get specific loan for the authenticated user
 loansRouter.get("/:id", async (c) => {
-  const auth = getAuth(c);
+  const user = c.get("user");
   const loanId = c.req.param("id");
-  
-  if (!auth?.userId) {
-    return c.json({ error: "Unauthorized" }, 401);
-  }
 
   if (!loanId) {
     return c.json({ error: "Loan ID required" }, 400);
-  }
-
-  // Get user from database using Clerk userId
-  const [user] = await db.select().from(users).where(eq(users.externalId, auth.userId));
-  
-  if (!user) {
-    return c.json({ error: "User not found" }, 404);
   }
 
   // Get loan that belongs to an entity owned by the user
@@ -70,7 +56,14 @@ loansRouter.get("/:id", async (c) => {
     .select()
     .from(loans)
     .innerJoin(entities, eq(loans.entityId, entities.id))
-    .where(and(eq(loans.id, loanId), eq(entities.userId, user.id)));
+    .where(
+      and(
+        eq(loans.id, loanId),
+        eq(entities.userId, user.id),
+        ne(loans.status, "deleted"),
+        ne(entities.status, "deleted")
+      )
+    );
 
   if (!loanRes) {
     return c.json({ error: "Loan not found" }, 404);
@@ -82,48 +75,43 @@ loansRouter.get("/:id", async (c) => {
 
 // Create new loan for the authenticated user
 loansRouter.post("/", validateBody(createLoanDto), async (c) => {
-  const auth = getAuth(c);
-  
-  if (!auth?.userId) {
-    return c.json({ error: "Unauthorized" }, 401);
-  }
-
+  const user = c.get("user");
   const loanData = c.req.valid("json");
 
-  // Get user from database using Clerk userId
-  const [user] = await db.select().from(users).where(eq(users.externalId, auth.userId));
-  
-  if (!user) {
-    return c.json({ error: "User not found" }, 404);
+  if (!loanData.entityId) {
+    return c.json({ error: "Entity ID is required" }, 400);
   }
 
   // Verify the entity belongs to the user
   const [entity] = await db
     .select({ id: entities.id })
     .from(entities)
-    .where(and(eq(entities.id, loanData.entityId), eq(entities.userId, user.id)));
+    .where(
+      and(eq(entities.id, loanData.entityId), eq(entities.userId, user.id))
+    );
 
   if (!entity) {
     return c.json({ error: "Entity not found or unauthorized" }, 404);
   }
 
-  // Check if loan with same name already exists for this entity
-  const [existingLoan] = await db
-    .select({ id: loans.id })
-    .from(loans)
-    .where(and(eq(loans.name, loanData.name), eq(loans.entityId, loanData.entityId)));
+  // Check if loan with same name already exists for this entity (only if name is provided)
+  if (loanData.name) {
+    const [existingLoan] = await db
+      .select({ id: loans.id })
+      .from(loans)
+      .where(
+        and(eq(loans.name, loanData.name), eq(loans.entityId, loanData.entityId!))
+      );
 
-  if (existingLoan) {
-    return c.json(
-      { error: "Loan already exists", data: existingLoan },
-      409
-    );
+    if (existingLoan) {
+      return c.json({ error: "Loan already exists", data: existingLoan }, 409);
+    }
   }
 
-  const [res] = await db
-    .insert(loans)
-    .values(loanData)
-    .$returningId();
+  const [res] = await db.insert(loans).values({
+    ...loanData,
+    consolidatedAt: new Date(), // Required field not in DTO
+  }).$returningId();
 
   const responseDto = createLoanResponseDto.safeParse(res);
   return c.json(responseDto.data, 201);
@@ -131,12 +119,8 @@ loansRouter.post("/", validateBody(createLoanDto), async (c) => {
 
 // Update loan
 loansRouter.put("/:id", validateBody(updateLoanDto), async (c) => {
-  const auth = getAuth(c);
+  const user = c.get("user");
   const loanId = c.req.param("id");
-  
-  if (!auth?.userId) {
-    return c.json({ error: "Unauthorized" }, 401);
-  }
 
   if (!loanId) {
     return c.json({ error: "Loan ID required" }, 400);
@@ -144,65 +128,48 @@ loansRouter.put("/:id", validateBody(updateLoanDto), async (c) => {
 
   const updateData = c.req.valid("json");
 
-  // Get user from database using Clerk userId
-  const [user] = await db.select().from(users).where(eq(users.externalId, auth.userId));
-  
-  if (!user) {
-    return c.json({ error: "User not found" }, 404);
-  }
-
   // Verify the loan belongs to an entity owned by the user
-  const [loanRes] = await db
-    .select()
+  const [loanCheck] = await db
+    .select({ id: loans.id })
     .from(loans)
     .innerJoin(entities, eq(loans.entityId, entities.id))
     .where(and(eq(loans.id, loanId), eq(entities.userId, user.id)));
 
-  if (!loanRes) {
-    return c.json({ error: "Loan not found" }, 404);
+  if (!loanCheck) {
+    return c.json({ error: "Loan not found or access denied" }, 403);
   }
 
-  await db
-    .update(loans)
-    .set(updateData)
-    .where(eq(loans.id, loanId));
+  await db.update(loans).set(updateData).where(eq(loans.id, loanId));
 
   return c.json({ success: true }, 200);
 });
 
-// Delete loan
+// Delete loan (soft delete)
 loansRouter.delete("/:id", async (c) => {
-  const auth = getAuth(c);
+  const user = c.get("user");
   const loanId = c.req.param("id");
-  
-  if (!auth?.userId) {
-    return c.json({ error: "Unauthorized" }, 401);
-  }
 
   if (!loanId) {
     return c.json({ error: "Loan ID required" }, 400);
   }
 
-  // Get user from database using Clerk userId
-  const [user] = await db.select().from(users).where(eq(users.externalId, auth.userId));
-  
-  if (!user) {
-    return c.json({ error: "User not found" }, 404);
-  }
-
   // Verify the loan belongs to an entity owned by the user
-  const [loanRes] = await db
-    .select()
+  const [loanCheck] = await db
+    .select({ id: loans.id })
     .from(loans)
     .innerJoin(entities, eq(loans.entityId, entities.id))
     .where(and(eq(loans.id, loanId), eq(entities.userId, user.id)));
 
-  if (!loanRes) {
-    return c.json({ error: "Loan not found" }, 404);
+  if (!loanCheck) {
+    return c.json({ error: "Loan not found or access denied" }, 403);
   }
 
   await db
-    .delete(loans)
+    .update(loans)
+    .set({
+      status: "deleted",
+      deletedAt: new Date(),
+    })
     .where(eq(loans.id, loanId));
 
   return c.json({ success: true }, 200);

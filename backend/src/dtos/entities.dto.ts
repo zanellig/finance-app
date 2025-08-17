@@ -11,6 +11,7 @@ export const getEntitiesDto = getEntityDto.array();
 
 export const createEntityDto = entity.pick({
   name: true,
+  type: true,
 });
 
 export const createEntityResponseDto = entity.pick({
