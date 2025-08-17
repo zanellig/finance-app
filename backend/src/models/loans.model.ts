@@ -18,6 +18,7 @@ export const loans = mysqlTable("loans", {
     () => entities.id,
     noActionCascade,
   ),
+  status: mysqlEnum(["active", "inactive", "deleted"]).default("active"),
   name: varchar({ length: 255 }),
   initialCapital: decimal("initial_capital", {
     precision: 2,
