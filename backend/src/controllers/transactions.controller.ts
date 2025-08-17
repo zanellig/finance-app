@@ -196,7 +196,10 @@ transactionsRouter.delete("/:id", async (c) => {
     return c.json({ error: "Transaction not found or access denied" }, 403);
   }
 
-  await db.delete(transactions).where(eq(transactions.id, transactionId));
+  await db.update(transactions).set({
+    status: "deleted",
+    deletedAt: new Date()
+  }).where(eq(transactions.id, transactionId));
 
   return c.json({ success: true }, 200);
 });
@@ -378,7 +381,10 @@ transactionsRouter.delete("/credit-cards/:id", async (c) => {
     return c.json({ error: "Credit card transaction not found or access denied" }, 403);
   }
 
-  await db.delete(creditCardTransactions).where(eq(creditCardTransactions.id, ccTransactionId));
+  await db.update(creditCardTransactions).set({
+    recordStatus: "deleted",
+    deletedAt: new Date()
+  }).where(eq(creditCardTransactions.id, ccTransactionId));
 
   return c.json({ success: true }, 200);
 });
