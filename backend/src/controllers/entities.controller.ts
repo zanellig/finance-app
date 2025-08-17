@@ -13,7 +13,9 @@ import {
 
 import { validateBody } from "@/utils/validator";
 
-const entitiesRouter = new Hono().basePath("/entities");
+const entitiesRouter = new Hono<{
+  Variables: { user: { id: string; email: string; name: string } };
+}>().basePath("/entities");
 
 // Get all entities for the authenticated user
 entitiesRouter.get("/", async (c) => {
@@ -23,7 +25,7 @@ entitiesRouter.get("/", async (c) => {
     .select()
     .from(entities)
     .where(and(eq(entities.userId, user.id), ne(entities.status, "deleted")));
-    
+
   const entitiesDto = getEntitiesDto.safeParse(entitiesRes);
   return c.json(entitiesDto.data || [], entitiesDto.success ? 200 : 500);
 });
@@ -32,7 +34,7 @@ entitiesRouter.get("/", async (c) => {
 entitiesRouter.get("/:id", async (c) => {
   const user = c.get("user");
   const entityId = c.req.param("id");
-  
+
   if (!entityId) {
     return c.json({ error: "Entity ID required" }, 400);
   }
@@ -40,7 +42,13 @@ entitiesRouter.get("/:id", async (c) => {
   const [entityRes] = await db
     .select()
     .from(entities)
-    .where(and(eq(entities.id, entityId), eq(entities.userId, user.id), ne(entities.status, "deleted")));
+    .where(
+      and(
+        eq(entities.id, entityId),
+        eq(entities.userId, user.id),
+        ne(entities.status, "deleted")
+      )
+    );
 
   if (!entityRes) {
     return c.json({ error: "Entity not found" }, 404);

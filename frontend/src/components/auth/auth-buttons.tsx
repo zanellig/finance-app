@@ -7,9 +7,7 @@ import { Button } from "@/components/ui/button";
 export function SignInButton() {
   return (
     <Link href="/login">
-      <Button variant="outline" className="font-medium">
-        Sign In
-      </Button>
+      <Button variant={"default"}>Sign In</Button>
     </Link>
   );
 }
@@ -17,9 +15,7 @@ export function SignInButton() {
 export function SignUpButton() {
   return (
     <Link href="/register">
-      <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5">
-        Sign Up
-      </Button>
+      <Button variant={"outline"}>Sign Up</Button>
     </Link>
   );
 }
