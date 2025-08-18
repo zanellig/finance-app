@@ -21,27 +21,6 @@ import transactionsRouter from "@/controllers/transactions.controller";
 
 // --- Utils ---
 
-/**
- * This way of writing Rails-like controllers is not recommended in the Hono docs.
- * Instead, we sould do the following:
- * ```ts
- * // entities.route.ts
- * import { Hono } from "hono";
- * const entities = new Hono();
- *
- * entities.get("/", (c)=>{
- *   return c.json({foo: "bar"})
- * });
- *
- * export default entities;
- * ```
- *
- * **This is because if we want to use a dynamic route parameter, it can't be inferred.**
- *
- * @see https://hono.dev/docs/guides/best-practices
- *
- * **TODO**: Refactor controllers
- */
 const app = new Hono().basePath("/api");
 
 app.use(etag(), logger());
