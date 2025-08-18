@@ -1,11 +1,19 @@
+// ---Core---
 import { Hono } from "hono";
-
-import type { AppBindings } from "@/types/hono";
-import { logger } from "@/middleware/logger";
-import { cors } from "hono/cors";
-import { compress } from "@hono/bun-compress";
 import { requestId } from "hono/request-id";
+import { cors } from "hono/cors";
+
+// ---Hono addons---
+import { compress } from "@hono/bun-compress";
+
+// ---Third-party dependencies---
 import { v4 } from "uuid";
+
+// ---Utils---
+import { logger } from "@/middleware/logger";
+
+// ---Types---
+import type { AppBindings } from "@/types/hono";
 
 export default function createApp() {
   const app = new Hono<AppBindings>({
