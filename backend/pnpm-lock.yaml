@@ -11,9 +11,6 @@ importers:
       '@hono/bun-compress':
         specifier: ^0.1.0
         version: 0.1.0(hono@4.8.5)
-      '@modelcontextprotocol/sdk':
-        specifier: ^1.17.3
-        version: 1.17.3
       dotenv:
         specifier: ^17.2.0
         version: 17.2.0
@@ -60,6 +57,12 @@ importers:
       typescript-eslint:
         specifier: ^8.39.0
         version: 8.39.0(eslint@9.32.0(jiti@2.5.1))(typescript@5.9.2)
+
+  src/mcp:
+    dependencies:
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.17.3
+        version: 1.17.3
 
 packages:
 

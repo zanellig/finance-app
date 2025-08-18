@@ -16,12 +16,10 @@
     "db:migrate": "bun run --bun drizzle-kit migrate",
     "db:studio": "bun run drizzle-kit studio",
     "db:check": "bun run --bun drizzle-kit check",
-    "format:check": "prettier . --check",
     "lint:check": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
     "@hono/bun-compress": "^0.1.0",
-    "@modelcontextprotocol/sdk": "^1.17.3",
     "dotenv": "^17.2.0",
     "drizzle-orm": "^0.44.3",
     "hono": "^4.8.5",
