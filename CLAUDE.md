@@ -213,3 +213,14 @@ await db.select().from(creditCardTransactions).where(and(
 ```typescript
 import { eq, and, ne } from "drizzle-orm";
 ```
+
+### File Modification Verification
+
+**Always use the IDE diagnostics tool to check for errors after file modifications.** This ensures that code changes don't introduce TypeScript errors, linting issues, or other problems.
+
+```typescript
+// After making any file changes, always run:
+mcp__ide__getDiagnostics
+```
+
+**Best Practice:** Check diagnostics immediately after editing files to catch issues early and maintain code quality throughout development.
