@@ -1,4 +1,4 @@
-import { creditCardTransaction, transaction } from "../types/transactions.types";
+import { creditCardTransaction, transaction } from "@/schemas";
 
 export const getCreditCardTransactionDto = creditCardTransaction.pick({
   id: true,

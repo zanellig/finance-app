@@ -1,4 +1,4 @@
-import { creditCard } from "../types/credit-cards.types";
+import { creditCard } from "@/schemas";
 
 export const getCreditCardDto = creditCard.pick({
   id: true,

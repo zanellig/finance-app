@@ -1,4 +1,4 @@
-import { entity } from "../types/entities.types";
+import { entity } from "@/schemas";
 
 export const getEntityDto = entity.pick({
   id: true,

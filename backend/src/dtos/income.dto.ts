@@ -1,6 +1,6 @@
-import { income } from "../types/income.types";
+import { incomeSchema } from "@/schemas";
 
-export const getIncomeDto = income.pick({
+export const getIncomeDto = incomeSchema.pick({
   id: true,
   userId: true,
   name: true,
@@ -13,7 +13,7 @@ export const getIncomeDto = income.pick({
 
 export const getIncomesDto = getIncomeDto.array();
 
-export const createIncomeDto = income.pick({
+export const createIncomeDto = incomeSchema.pick({
   name: true,
   amount: true,
   frequency: true,
@@ -22,11 +22,11 @@ export const createIncomeDto = income.pick({
   endDate: true,
 });
 
-export const createIncomeResponseDto = income.pick({
+export const createIncomeResponseDto = incomeSchema.pick({
   id: true,
 });
 
-export const updateIncomeDto = income.pick({
+export const updateIncomeDto = incomeSchema.pick({
   name: true,
   amount: true,
   frequency: true,
