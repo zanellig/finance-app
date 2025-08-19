@@ -1,4 +1,4 @@
-import { loan } from "../types/loans.types";
+import { loan } from "@/schemas";
 
 export const getLoanDto = loan.pick({
   id: true,

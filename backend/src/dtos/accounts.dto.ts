@@ -1,4 +1,4 @@
-import { account } from "../types/accounts.types";
+import { account } from "@/schemas";
 
 export const getAccountDto = account.pick({
   id: true,

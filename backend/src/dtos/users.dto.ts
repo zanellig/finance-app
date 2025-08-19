@@ -1,4 +1,4 @@
-import { user } from "../types/users.types";
+import { user } from "@/schemas";
 
 export const getUserDto = user.pick({
   id: true,
@@ -12,7 +12,7 @@ export const getUsersDto = getUserDto.array();
 export const createUserDto = user.pick({
   name: true,
   email: true,
-  password: true,
+  passwordHash: true,
 }).openapi('CreateUser');
 
 export const createUserResponseDto = user.pick({
@@ -35,7 +35,7 @@ export const deleteUserDto = user.pick({
 
 export const loginUserDto = user.pick({
   email: true,
-  password: true,
+  passwordHash: true,
 }).openapi('LoginUser');
 
 export const loginResponseDto = user.pick({
