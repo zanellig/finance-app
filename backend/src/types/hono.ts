@@ -1,6 +1,7 @@
 import { Context } from "hono";
 import { JWTPayload } from "@/services/auth";
 import { PinoLogger } from "hono-pino";
+import { OpenAPIHono } from "@hono/zod-openapi";
 
 export interface User {
   id: string;
@@ -22,3 +23,5 @@ export interface AppBindings {
     logger: PinoLogger;
   };
 }
+
+export type AppOpenAPI = OpenAPIHono<AppBindings>;

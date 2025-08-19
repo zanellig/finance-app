@@ -1,5 +1,6 @@
 // ---Core---
-import { Hono } from "hono";
+import { OpenAPIHono } from "@hono/zod-openapi";
+
 import { requestId } from "hono/request-id";
 import { cors } from "hono/cors";
 
@@ -15,11 +16,14 @@ import { logger } from "@/middleware/logger";
 // ---Types---
 import type { AppBindings } from "@/types/hono";
 
-export default function createApp() {
-  const app = new Hono<AppBindings>({
+export function createRouter() {
+  return new OpenAPIHono<AppBindings>({
     strict: false,
   });
-  app.basePath("/api");
+}
+
+export default function createApp() {
+  const app = createRouter();
   app.use(requestId({ generator: () => v4() }));
   app.use(logger());
   app.use("*", cors());
