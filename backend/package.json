@@ -1,6 +1,9 @@
 {
   "name": "backend",
   "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Backend for Finance Tracker",
   "author": {
     "name": "Gonzalo Zanelli",
     "email": "gonzalozanelli1@gmail.com",
@@ -20,6 +23,8 @@
   },
   "dependencies": {
     "@hono/bun-compress": "^0.1.0",
+    "@hono/zod-openapi": "^1.1.0",
+    "@scalar/hono-api-reference": "^0.9.13",
     "dotenv": "^17.2.0",
     "drizzle-orm": "^0.44.3",
     "hono": "^4.8.5",
