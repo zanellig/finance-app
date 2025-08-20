@@ -1,20 +1,21 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import db from "@/services/db";
-
-import { users } from "@/models/users.model";
-
-import authService from "@/services/auth";
-import redisService from "@/services/redis";
-import tokenBlacklistService from "@/services/token-blacklist";
-import { authRateLimit, strictAuthRateLimit } from "@/middleware/rate-limit";
 import { eq } from "drizzle-orm";
-import { createRouter } from "@/utils/create-app";
 import {
   createUserDto,
   createUserResponseDto,
   loginResponseDto,
   loginUserDto,
 } from "@/dtos/users.dto";
+import { authRateLimit, strictAuthRateLimit } from "@/middleware/rate-limit";
+import { users } from "@/models/users.model";
+import authService from "@/services/auth";
+import db from "@/services/db";
+
+import redisService from "@/services/redis";
+import tokenBlacklistService from "@/services/token-blacklist";
+import { createRouter } from "@/utils/create-app";
+
+import { createJsonContent, HttpStatusCodes } from "@/utils/openapi-helpers";
 
 const usersRouter = createRouter();
 
@@ -23,62 +24,42 @@ const registerRoute = createRoute({
   method: "post",
   path: "/register",
   request: {
-    body: {
-      content: {
-        "application/json": {
-          schema: createUserDto,
-        },
-      },
-    },
+    body: createJsonContent(createUserDto),
   },
   responses: {
-    201: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean().openapi({ example: true }),
-            message: z
-              .string()
-              .openapi({ example: "User created successfully" }),
-            user: createUserResponseDto,
-            token: z
-              .string()
-              .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
-            refreshToken: z
-              .string()
-              .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
-          }),
-        },
-      },
-      description: "User successfully registered",
-    },
-    409: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean().openapi({ example: false }),
-            message: z
-              .string()
-              .openapi({ example: "Email already registered" }),
-          }),
-        },
-      },
-      description: "Email already exists",
-    },
-    429: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean().openapi({ example: false }),
-            message: z.string().openapi({
-              example: "Too many requests, please try again later",
-            }),
-            retryAfter: z.number().openapi({ example: 900 }),
-          }),
-        },
-      },
-      description: "Rate limit exceeded",
-    },
+    [HttpStatusCodes.CREATED]: createJsonContent(
+      z.object({
+        success: z.boolean().openapi({ example: true }),
+        message: z.string().openapi({ example: "User created successfully" }),
+        user: createUserResponseDto,
+        token: z
+          .string()
+          .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
+        refreshToken: z
+          .string()
+          .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
+      }),
+      "User successfully registered"
+    ),
+
+    [HttpStatusCodes.CONFLICT]: createJsonContent(
+      z.object({
+        success: z.boolean().openapi({ example: false }),
+        message: z.string().openapi({ example: "Email already registered" }),
+      }),
+      "Email already exists"
+    ),
+
+    [HttpStatusCodes.TOO_MANY_REQUESTS]: createJsonContent(
+      z.object({
+        success: z.boolean().openapi({ example: false }),
+        message: z.string().openapi({
+          example: "Too many requests, please try again later",
+        }),
+        retryAfter: z.number().openapi({ example: 900 }),
+      }),
+      "Rate limit exceeded"
+    ),
   },
   tags: ["Users"],
 });
@@ -87,58 +68,42 @@ const loginRoute = createRoute({
   method: "post",
   path: "/login",
   request: {
-    body: {
-      content: {
-        "application/json": {
-          schema: loginUserDto,
-        },
-      },
-    },
+    body: createJsonContent(loginUserDto),
   },
   responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean().openapi({ example: true }),
-            message: z.string().openapi({ example: "Login successful" }),
-            user: loginResponseDto,
-            token: z
-              .string()
-              .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
-            refreshToken: z
-              .string()
-              .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
-          }),
-        },
-      },
-      description: "User successfully authenticated",
-    },
-    401: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean().openapi({ example: false }),
-            message: z.string().openapi({ example: "Invalid credentials" }),
-          }),
-        },
-      },
-      description: "Invalid credentials",
-    },
-    429: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean().openapi({ example: false }),
-            message: z.string().openapi({
-              example: "Too many requests, please try again later",
-            }),
-            retryAfter: z.number().openapi({ example: 900 }),
-          }),
-        },
-      },
-      description: "Rate limit exceeded",
-    },
+    [HttpStatusCodes.OK]: createJsonContent(
+      z.object({
+        success: z.boolean().openapi({ example: true }),
+        message: z.string().openapi({ example: "Login successful" }),
+        user: loginResponseDto,
+        token: z
+          .string()
+          .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
+        refreshToken: z
+          .string()
+          .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
+      }),
+      "User successfully authenticated"
+    ),
+
+    [HttpStatusCodes.UNAUTHORIZED]: createJsonContent(
+      z.object({
+        success: z.boolean().openapi({ example: false }),
+        message: z.string().openapi({ example: "Invalid credentials" }),
+      }),
+      "Invalid credentials"
+    ),
+
+    [HttpStatusCodes.TOO_MANY_REQUESTS]: createJsonContent(
+      z.object({
+        success: z.boolean().openapi({ example: false }),
+        message: z.string().openapi({
+          example: "Too many requests, please try again later",
+        }),
+        retryAfter: z.number().openapi({ example: 900 }),
+      }),
+      "Rate limit exceeded"
+    ),
   },
   tags: ["Users"],
 });
@@ -147,61 +112,43 @@ const refreshTokenRoute = createRoute({
   method: "post",
   path: "/refresh",
   request: {
-    body: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            refreshToken: z.string(),
-          }),
-        },
-      },
-    },
+    body: createJsonContent(z.object({ refreshToken: z.string() })),
   },
   responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean().openapi({ example: true }),
-            message: z
-              .string()
-              .openapi({ example: "Token refreshed successfully" }),
-            token: z
-              .string()
-              .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
-            refreshToken: z
-              .string()
-              .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
-          }),
-        },
-      },
-      description: "Token refreshed successfully",
-    },
-    401: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean().openapi({ example: false }),
-            message: z.string().openapi({ example: "Invalid refresh token" }),
-          }),
-        },
-      },
-      description: "Invalid or expired refresh token",
-    },
-    429: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean().openapi({ example: false }),
-            message: z.string().openapi({
-              example: "Too many requests, please try again later",
-            }),
-            retryAfter: z.number().openapi({ example: 900 }),
-          }),
-        },
-      },
-      description: "Rate limit exceeded",
-    },
+    [HttpStatusCodes.OK]: createJsonContent(
+      z.object({
+        success: z.boolean().openapi({ example: true }),
+        message: z
+          .string()
+          .openapi({ example: "Token refreshed successfully" }),
+        token: z
+          .string()
+          .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
+        refreshToken: z
+          .string()
+          .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
+      }),
+      "Token refreshed successfully"
+    ),
+
+    [HttpStatusCodes.UNAUTHORIZED]: createJsonContent(
+      z.object({
+        success: z.boolean().openapi({ example: false }),
+        message: z.string().openapi({ example: "Invalid refresh token" }),
+      }),
+      "Invalid or expired refresh token"
+    ),
+
+    [HttpStatusCodes.TOO_MANY_REQUESTS]: createJsonContent(
+      z.object({
+        success: z.boolean().openapi({ example: false }),
+        message: z.string().openapi({
+          example: "Too many requests, please try again later",
+        }),
+        retryAfter: z.number().openapi({ example: 900 }),
+      }),
+      "Rate limit exceeded"
+    ),
   },
   tags: ["Users"],
 });
@@ -222,39 +169,27 @@ const logoutRoute = createRoute({
     },
   },
   responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean().openapi({ example: true }),
-            message: z.string().openapi({ example: "Logged out successfully" }),
-          }),
-        },
-      },
-      description: "Successfully logged out",
-    },
-    401: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean().openapi({ example: false }),
-            message: z.string().openapi({ example: "Authentication required" }),
-          }),
-        },
-      },
-      description: "Authentication required",
-    },
-    500: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean().openapi({ example: false }),
-            message: z.string().openapi({ example: "Logout failed" }),
-          }),
-        },
-      },
-      description: "Internal server error",
-    },
+    [HttpStatusCodes.OK]: createJsonContent(
+      z.object({
+        success: z.boolean().openapi({ example: true }),
+        message: z.string().openapi({ example: "Logged out successfully" }),
+      }),
+      "Successfully logged out"
+    ),
+    [HttpStatusCodes.UNAUTHORIZED]: createJsonContent(
+      z.object({
+        success: z.boolean().openapi({ example: false }),
+        message: z.string().openapi({ example: "Authentication required" }),
+      }),
+      "Authentication required"
+    ),
+    [HttpStatusCodes.INTERNAL_SERVER_ERROR]: createJsonContent(
+      z.object({
+        success: z.boolean().openapi({ example: false }),
+        message: z.string().openapi({ example: "Logout failed" }),
+      }),
+      "Internal server error"
+    ),
   },
   tags: ["Users"],
 });
@@ -263,8 +198,8 @@ usersRouter.use("/register", authRateLimit);
 usersRouter.openapi(registerRoute, async (c) => {
   const { name, email, password } = c.req.valid("json");
   const clientIp =
-    c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown";
-  const userAgent = c.req.header("user-agent") || "unknown";
+    c.req.header("x-forwarded-for") ?? c.req.header("x-real-ip") ?? "unknown";
+  const userAgent = c.req.header("user-agent") ?? "unknown";
 
   // Check for existing user with constant-time lookup
   const [existingUser] = await db
@@ -340,8 +275,8 @@ usersRouter.use("/login", strictAuthRateLimit);
 usersRouter.openapi(loginRoute, async (c) => {
   const { email, password } = c.req.valid("json");
   const clientIp =
-    c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown";
-  const userAgent = c.req.header("user-agent") || "unknown";
+    c.req.header("x-forwarded-for") ?? c.req.header("x-real-ip") ?? "unknown";
+  const userAgent = c.req.header("user-agent") ?? "unknown";
 
   // Constant-time user lookup and password verification to prevent timing attacks
   const [user] = await db.select().from(users).where(eq(users.email, email));
@@ -419,8 +354,8 @@ usersRouter.use("/refresh", authRateLimit);
 usersRouter.openapi(refreshTokenRoute, async (c) => {
   const { refreshToken } = c.req.valid("json");
   const clientIp =
-    c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown";
-  const userAgent = c.req.header("user-agent") || "unknown";
+    c.req.header("x-forwarded-for") ?? c.req.header("x-real-ip") ?? "unknown";
+  const userAgent = c.req.header("user-agent") ?? "unknown";
 
   // Verify refresh token
   const payload = authService.verifyRefreshToken(refreshToken);
@@ -513,8 +448,8 @@ usersRouter.openapi(logoutRoute, async (c) => {
   const authHeader = c.req.header("Authorization");
   const accessToken = authService.extractTokenFromHeader(authHeader);
   const clientIp =
-    c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown";
-  const userAgent = c.req.header("user-agent") || "unknown";
+    c.req.header("x-forwarded-for") ?? c.req.header("x-real-ip") ?? "unknown";
+  const userAgent = c.req.header("user-agent") ?? "unknown";
 
   if (!accessToken) {
     return c.json({ success: false, message: "Authentication required" }, 401);
