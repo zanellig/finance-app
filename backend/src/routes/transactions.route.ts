@@ -36,7 +36,9 @@ transactionsRouter.get("/", async (c) => {
   const transactionsRes = await db
     .select()
     .from(transactions)
-    .where(and(eq(transactions.userId, user.id), ne(transactions.status, "deleted")));
+    .where(
+      and(eq(transactions.userId, user.id), ne(transactions.status, "deleted"))
+    );
 
   const transactionsDto = getTransactionsDto.safeParse(transactionsRes);
   return c.json(

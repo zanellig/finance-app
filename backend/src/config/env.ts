@@ -11,20 +11,21 @@ const EnvSchema = z.object({
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
+  JWT_SECRET: z
+    .string()
+    .min(32, "JWT_SECRET must be at least 32 characters long"),
   MYSQL_URL: z
     .string()
     .regex(
       /^mysql:\/\/[^:]+:[^@]+@[^:]+:\d+\/[^/]+$/,
       "Invalid MySQL URL format. Expected format: mysql://{username}:{password}@{HOST}:{PORT}/{db_name}"
     ),
-  DB_HOST: z.string().default("localhost"),
-  DB_PORT: z.string(),
-  DB_USER: z.string(),
-  DB_PASSWORD: z.string(),
-  DB_NAME: z.string(),
-  JWT_SECRET: z
+  REDIS_URL: z
     .string()
-    .min(32, "JWT_SECRET must be at least 32 characters long"),
+    .regex(
+      /^redis:\/\/.*$/,
+      "Invalid Redis URL format. Expected format: redis://[username:password@]host:port"
+    ),
 });
 
 const parsedEnv = EnvSchema.safeParse(process.env);
