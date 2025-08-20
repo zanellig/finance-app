@@ -1,66 +1,87 @@
-import { user } from "@/schemas";
+import {
+  userSelectSchema,
+  userInsertSchema,
+  userUpdateSchema,
+} from "@/schemas";
+import { z } from "@hono/zod-openapi";
 
-export const getUserDto = user.pick({
-  id: true,
-  status: true,
-  name: true,
-  email: true,
-}).openapi('User');
+const password = z
+  .string()
+  .openapi({
+    title: "Password",
+    description:
+      "The password for the user. Must be at least 8 characters long.",
+    format: "password",
+  })
+  .min(8, "Password must be at least 8 characters long")
+  .max(255, "Password must not exceed 255 characters")
+  .refine((val) => /[a-zA-Z]/.test(val) && /\d/.test(val), {
+    message: "Password must contain at least one letter and one number",
+  })
+  .refine((val) => !/\s/.test(val), {
+    message: "Password must not contain whitespace",
+  })
+  .refine((val) => /[!@#$%^&*(),.?":{}|<>]/.test(val), {
+    message: "Password must contain at least one special character",
+  });
 
-export const getUsersDto = getUserDto.array();
+export const getUserDto = userSelectSchema
+  .pick({
+    id: true,
+    status: true,
+    name: true,
+    email: true,
+  })
+  .openapi("User");
 
-export const createUserDto = user.pick({
-  name: true,
-  email: true,
-  passwordHash: true,
-}).openapi('CreateUser');
+export const _getUsersDto = getUserDto.array().openapi("_Users");
 
-export const createUserResponseDto = user.pick({
-  id: true,
-  name: true,
-  email: true,
-}).openapi('CreateUserResponse');
+export const createUserDto = userInsertSchema
+  .pick({
+    name: true,
+    email: true,
+  })
+  .extend({ password })
+  .openapi("CreateUser");
 
-export const updateUserDto = user.pick({
-  id: true,
-  status: true,
-  name: true,
-  email: true,
-}).openapi('UpdateUser');
+export const createUserResponseDto = userSelectSchema
+  .pick({
+    id: true,
+    name: true,
+    email: true,
+  })
+  .openapi("CreateUserResponse");
 
-export const deleteUserDto = user.pick({
-  id: true,
-  status: true,
-}).openapi('DeleteUser');
+/**
+ * Not currently used
+ */
+export const updateUserDto = userUpdateSchema
+  .pick({
+    id: true,
+    status: true,
+    name: true,
+    email: true,
+  })
+  .openapi("UpdateUser");
 
-export const loginUserDto = user.pick({
-  email: true,
-  passwordHash: true,
-}).openapi('LoginUser');
+export const deleteUserResponseDto = userSelectSchema
+  .pick({
+    id: true,
+    status: true,
+  })
+  .openapi("DeleteUser");
 
-export const loginResponseDto = user.pick({
-  id: true,
-  name: true,
-  email: true,
-}).openapi('LoginResponse');
+export const loginUserDto = userSelectSchema
+  .pick({
+    email: true,
+  })
+  .extend({ password })
+  .openapi("LoginUser");
 
-export const apiResponseDto = {
-  success: {
-    type: 'object',
-    properties: {
-      success: { type: 'boolean', example: true },
-      message: { type: 'string' },
-      user: { $ref: '#/components/schemas/CreateUserResponse' },
-      token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' }
-    },
-    required: ['success', 'message']
-  },
-  error: {
-    type: 'object',
-    properties: {
-      success: { type: 'boolean', example: false },
-      message: { type: 'string' }
-    },
-    required: ['success', 'message']
-  }
-} as const;
+export const loginResponseDto = userSelectSchema
+  .pick({
+    id: true,
+    name: true,
+    email: true,
+  })
+  .openapi("LoginResponse");

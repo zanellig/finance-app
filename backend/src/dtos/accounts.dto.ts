@@ -1,42 +1,56 @@
-import { account } from "@/schemas";
+import {
+  accountSelectSchema,
+  accountInsertSchema,
+  accountUpdateSchema,
+} from "@/schemas";
 
-export const getAccountDto = account.pick({
-  id: true,
-  entityId: true,
-  name: true,
-  type: true,
-  balance: true,
-  annualNominalRate: true,
-  isSalaryAccount: true,
-  overdraftLimit: true,
-});
+export const getAccountDto = accountSelectSchema
+  .pick({
+    id: true,
+    entityId: true,
+    name: true,
+    type: true,
+    balance: true,
+    annualNominalRate: true,
+    isSalaryAccount: true,
+    overdraftLimit: true,
+  })
+  .openapi("Account");
 
-export const getAccountsDto = getAccountDto.array();
+export const getAccountsDto = getAccountDto.array().openapi("Accounts");
 
-export const createAccountDto = account.pick({
-  entityId: true,
-  name: true,
-  type: true,
-  balance: true,
-  annualNominalRate: true,
-  isSalaryAccount: true,
-  overdraftLimit: true,
-});
+export const createAccountDto = accountInsertSchema
+  .pick({
+    entityId: true,
+    name: true,
+    type: true,
+    balance: true,
+    annualNominalRate: true,
+    isSalaryAccount: true,
+    overdraftLimit: true,
+  })
+  .openapi("CreateAccount");
 
-export const createAccountResponseDto = account.pick({
-  id: true,
-});
+export const createAccountResponseDto = accountSelectSchema
+  .pick({
+    id: true,
+  })
+  .openapi("CreateAccountResponse");
 
-export const updateAccountDto = account.pick({
-  id: true,
-  name: true,
-  type: true,
-  balance: true,
-  annualNominalRate: true,
-  isSalaryAccount: true,
-  overdraftLimit: true,
-});
+export const updateAccountDto = accountUpdateSchema
+  .pick({
+    id: true,
+    name: true,
+    type: true,
+    balance: true,
+    annualNominalRate: true,
+    isSalaryAccount: true,
+    overdraftLimit: true,
+  })
+  .openapi("UpdateAccount");
 
-export const deleteAccountDto = account.pick({
-  id: true,
-});
+export const deleteAccountDto = accountSelectSchema
+  .pick({
+    id: true,
+  })
+  .openapi("DeleteAccount");
