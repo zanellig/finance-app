@@ -9,14 +9,14 @@ import {
 
 import { v4 } from "uuid";
 
-import { entities } from "@/models/entities.model";
 import { defaultTimestamps, noActionCascade } from "@/models/constants";
+import { entities } from "@/models/entities.model";
 
 export const loans = mysqlTable("loans", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
   entityId: varchar("entity_id", { length: 36 }).references(
     () => entities.id,
-    noActionCascade,
+    noActionCascade
   ),
   status: mysqlEnum(["active", "inactive", "deleted"]).default("active"),
   name: varchar({ length: 255 }),
