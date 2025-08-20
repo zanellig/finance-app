@@ -10,9 +10,34 @@ services:
       MYSQL_DATABASE: finance_db
       TZ: America/Argentina/Buenos_Aires
     ports:
-      - "3306:3306"
+      - "13306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis-container
+    restart: unless-stopped
+    command: redis-server
+    environment:
+      TZ: America/Argentina/Buenos_Aires
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  redis-commander:
+    image: ghcr.io/joeferner/redis-commander:latest
+    container_name: redis-commander-container
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+      - TZ=America/Argentina/Buenos_Aires
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+
 volumes:
   mysql-data:
+  redis-data:
