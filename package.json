@@ -1,5 +1,6 @@
 {
   "name": "finance-tracker",
+  "version": "0.2.0",
   "private": true,
   "author": {
     "name": "Gonzalo Zanelli",
