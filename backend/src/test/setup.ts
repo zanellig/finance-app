@@ -1,5 +1,8 @@
 // Test configuration
+process.env.NODE_ENV = "development";
 process.env.MYSQL_URL = "mysql://test:test@localhost:3306/finance_tracker_test";
+process.env.REDIS_URL = "redis://localhost:6379";
+process.env.JWT_SECRET = "test-jwt-secret-key-32-characters-long";
 process.env.CLERK_SECRET_KEY = "sk_test_1234567890abcdef1234567890abcdef12345678";
 process.env.CLERK_PUBLISHABLE_KEY = "pk_test_1234567890abcdef1234567890abcdef12345678";
 
@@ -12,11 +15,9 @@ export const noAuthHeaders = () => ({});
 
 // Test data factories
 export const createTestUser = () => ({
-  externalId: "test_clerk_user_123",
-  email: "test@example.com",
-  firstName: "Test",
-  lastName: "User",
-  password: "hashedpassword123",
+  name: "Test User",
+  email: "test@example.com", 
+  password: "TestPass123!",
 });
 
 export const createTestEntity = () => ({
