@@ -140,23 +140,37 @@ finance-tracker/
 
 ### Versioning Commands
 
-```bash
-# Update version in frontend package.json
-cd frontend && npm version [major|minor|patch]
+**ALWAYS bump versions using `pnpm` according to the guidelines in `VERSIONING.md`:**
 
-# Create git tag for release
-git tag -a v1.2.3 -m "Release version 1.2.3"
+```bash
+# Update version using pnpm (synchronized versioning across monorepo)
+cd backend && pnpm version [major|minor|patch]
+cd ../frontend && pnpm version [major|minor|patch]
+cd .. && pnpm version [major|minor|patch]
+
+# Alternative: Use git versioning (combines pnpm version + git operations)
+cd backend && pnpm version [major|minor|patch] --git-tag-version=false
+cd ../frontend && pnpm version [major|minor|patch] --git-tag-version=false
+cd .. && pnpm version [major|minor|patch] --git-tag-version=false
+
+# Create git tag and commit version changes
+git add .
+git commit -m "chore: bump version to v$(node -p "require('./package.json').version")"
+git tag -a v$(node -p "require('./package.json').version") -m "Release version $(node -p "require('./package.json').version")"
 
 # Push version and tags
 git push origin main --tags
 ```
 
 **Version Decision Guidelines:**
+
 - **MAJOR (X.0.0)**: Breaking database schema changes, removed API endpoints, breaking component changes
 - **MINOR (x.Y.0)**: New features, new endpoints, new UI components, new database tables
 - **PATCH (x.y.Z)**: Bug fixes, security updates, dependency updates, performance improvements
 
 **Always reference VERSIONING.md for detailed decision criteria and AI agent implementation guidelines.**
+
+**CRITICAL**: When completing tasks that warrant a version bump, always update the version using `pnpm` and follow the synchronized versioning strategy defined in `VERSIONING.md`.
 
 ## Critical Development Rules
 
@@ -166,16 +180,20 @@ git push origin main --tags
 
 ```typescript
 // ✅ CORRECT: Soft delete
-await db.update(tableName).set({
-  status: "deleted",
-  deletedAt: new Date()
-}).where(eq(tableName.id, id));
+await db
+  .update(tableName)
+  .set({
+    status: "deleted",
+    deletedAt: new Date(),
+  })
+  .where(eq(tableName.id, id));
 
 // ❌ WRONG: Hard delete - NEVER DO THIS
 await db.delete(tableName).where(eq(tableName.id, id));
 ```
 
 **All models must have soft delete fields:**
+
 - `status: mysqlEnum(["active", "inactive", "deleted"]).default("active")`
 - `deletedAt: timestamp("deleted_at")` (included in `defaultTimestamps`)
 
@@ -187,29 +205,38 @@ await db.delete(tableName).where(eq(tableName.id, id));
 
 ```typescript
 // ✅ CORRECT: Single table with soft delete
-await db.select().from(tableName).where(and(
-  eq(tableName.userId, user.id),
-  ne(tableName.status, "deleted")
-));
+await db
+  .select()
+  .from(tableName)
+  .where(and(eq(tableName.userId, user.id), ne(tableName.status, "deleted")));
 
 // ✅ CORRECT: Join with multiple tables having soft delete
-await db.select()
+await db
+  .select()
   .from(accounts)
   .innerJoin(entities, eq(accounts.entityId, entities.id))
-  .where(and(
-    eq(entities.userId, user.id),
-    ne(accounts.status, "deleted"),
-    ne(entities.status, "deleted")
-  ));
+  .where(
+    and(
+      eq(entities.userId, user.id),
+      ne(accounts.status, "deleted"),
+      ne(entities.status, "deleted")
+    )
+  );
 
 // ✅ CORRECT: Credit card transactions (use recordStatus)
-await db.select().from(creditCardTransactions).where(and(
-  eq(creditCardTransactions.creditCardId, cardId),
-  ne(creditCardTransactions.recordStatus, "deleted")
-));
+await db
+  .select()
+  .from(creditCardTransactions)
+  .where(
+    and(
+      eq(creditCardTransactions.creditCardId, cardId),
+      ne(creditCardTransactions.recordStatus, "deleted")
+    )
+  );
 ```
 
 **Required imports:** Add `ne` (not equal) to drizzle-orm imports:
+
 ```typescript
 import { eq, and, ne } from "drizzle-orm";
 ```
@@ -220,7 +247,7 @@ import { eq, and, ne } from "drizzle-orm";
 
 ```typescript
 // After making any file changes, always run:
-mcp__ide__getDiagnostics
+mcp__ide__getDiagnostics;
 ```
 
 **Best Practice:** Check diagnostics immediately after editing files to catch issues early and maintain code quality throughout development.
