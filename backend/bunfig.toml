@@ -1,0 +1,2 @@
+[module.resolution]
+alias = { "zod" = "./src/utils/zod-global" }

@@ -2,7 +2,7 @@
   "name": "backend",
   "private": true,
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Backend for Finance Tracker",
   "author": {
     "name": "Gonzalo Zanelli",
@@ -10,10 +10,12 @@
     "url": "https://www.github.com/zanellig"
   },
   "scripts": {
-    "dev": "bun --hot run src/index.ts",
+    "dev": "bun --hot --watch src/index.ts",
     "mcp-server": "bun run src/mcp-server.ts",
     "test": "bun test",
     "test:watch": "bun test --watch",
+    "watch:tests": "bun test --watch ./src/test/",
+    "watch:lint": "echo 'Running initial lint check...' && bun run lint:check && echo '✓ Initial lint passed. Use test:watch for continuous testing with lint checks on save.'",
     "db:push": "bun run --bun drizzle-kit push",
     "db:generate": "bun run --bun drizzle-kit generate",
     "db:migrate": "bun run --bun drizzle-kit migrate",
@@ -25,25 +27,28 @@
     "@hono/bun-compress": "^0.1.0",
     "@hono/zod-openapi": "^1.1.0",
     "@scalar/hono-api-reference": "^0.9.13",
-    "dotenv": "^17.2.0",
-    "drizzle-orm": "^0.44.3",
-    "hono": "^4.8.5",
+    "@types/ioredis": "^5.0.0",
+    "dotenv": "^17.2.1",
+    "drizzle-orm": "^0.44.4",
+    "drizzle-zod": "file:../../projects/drizzle-orm/drizzle-zod/dist/drizzle-zod-0.8.3.tgz",
+    "hono": "^4.9.2",
     "hono-pino": "^0.10.2",
+    "ioredis": "^5.7.0",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.14.2",
+    "mysql2": "^3.14.3",
     "pino": "^9.9.0",
     "pino-pretty": "^13.1.1",
     "uuid": "^11.1.0",
-    "zod": "^4.0.5"
+    "zod": "^4.0.17"
   },
   "devDependencies": {
-    "@eslint/js": "^9.32.0",
+    "@eslint/js": "^9.33.0",
     "@types/bun": "latest",
     "@types/jsonwebtoken": "^9.0.10",
     "drizzle-kit": "^0.31.4",
-    "eslint": "^9.32.0",
+    "eslint": "^9.33.0",
     "globals": "^16.3.0",
     "jiti": "^2.5.1",
-    "typescript-eslint": "^8.39.0"
+    "typescript-eslint": "^8.40.0"
   }
 }
