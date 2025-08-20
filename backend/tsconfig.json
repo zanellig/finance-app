@@ -8,6 +8,9 @@
       "@/*": ["src/*"]
     },
     "resolveJsonModule": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"]
+  },
+  "include": ["src/**/*", "eslint.config.js"],
+  "exclude": ["node_modules", "dist", "build", "coverage", "scripts"]
 }
