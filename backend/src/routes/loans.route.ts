@@ -100,7 +100,10 @@ loansRouter.post("/", validateBody(createLoanDto), async (c) => {
       .select({ id: loans.id })
       .from(loans)
       .where(
-        and(eq(loans.name, loanData.name), eq(loans.entityId, loanData.entityId!))
+        and(
+          eq(loans.name, loanData.name),
+          eq(loans.entityId, loanData.entityId!)
+        )
       );
 
     if (existingLoan) {
@@ -108,10 +111,13 @@ loansRouter.post("/", validateBody(createLoanDto), async (c) => {
     }
   }
 
-  const [res] = await db.insert(loans).values({
-    ...loanData,
-    consolidatedAt: new Date(), // Required field not in DTO
-  }).$returningId();
+  const [res] = await db
+    .insert(loans)
+    .values({
+      ...loanData,
+      consolidatedAt: new Date(), // Required field not in DTO
+    })
+    .$returningId();
 
   const responseDto = createLoanResponseDto.safeParse(res);
   return c.json(responseDto.data, 201);
