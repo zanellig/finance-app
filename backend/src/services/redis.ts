@@ -24,7 +24,7 @@ class RedisService {
         // Maximum retry attempts
         if (times > 10) {
           loggerInstance().fatal(
-            `Redis max retry attempts exceeded (${times})`
+            `Redis max retry attempts exceeded (${String(times)})`
           );
           this.recordFailure();
           return null; // Stop retrying
@@ -36,7 +36,7 @@ class RedisService {
         const delay = Math.min(baseDelay + jitter, 30000);
 
         loggerInstance().warn(
-          `Redis retry attempt ${times}, waiting ${delay}ms`
+          `Redis retry attempt ${String(times)}, waiting ${String(delay)}ms`
         );
         return delay;
       },
@@ -82,7 +82,7 @@ class RedisService {
     this.failureCount++;
     this.lastFailureTime = Date.now();
     loggerInstance().warn(
-      `Redis failure recorded. Count: ${this.failureCount}`
+      `Redis failure recorded. Count: ${String(this.failureCount)}`
     );
   }
 
@@ -228,7 +228,7 @@ class RedisService {
     success: boolean;
     details?: Record<string, unknown>;
   }): Promise<void> {
-    const logKey = `auth_log:${event.type}:${Date.now()}`;
+    const logKey = `auth_log:${event.type}:${String(Date.now())}`;
     const logData = {
       ...event,
       timestamp: event.timestamp.toISOString(),
