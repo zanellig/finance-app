@@ -46,9 +46,6 @@ cd backend && pnpm db:migrate   # Run migrations
 cd backend && pnpm db:studio    # Open Drizzle Studio
 cd backend && pnpm db:check     # Check schema consistency
 
-# Code quality
-cd backend && pnpm lint:check   # ESLint check
-cd backend && pnpm format:check # Prettier check
 ```
 
 ### Frontend Development
