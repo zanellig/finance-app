@@ -21,13 +21,13 @@
     "db:migrate": "bun run --bun drizzle-kit migrate",
     "db:studio": "bun run drizzle-kit studio",
     "db:check": "bun run --bun drizzle-kit check",
-    "lint:check": "eslint . --ext .ts,.tsx"
+    "lint:check": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix"
   },
   "dependencies": {
     "@hono/bun-compress": "^0.1.0",
     "@hono/zod-openapi": "^1.1.0",
     "@scalar/hono-api-reference": "^0.9.13",
-    "@types/ioredis": "^5.0.0",
     "dotenv": "^17.2.1",
     "drizzle-orm": "^0.44.4",
     "drizzle-zod": "file:../../projects/drizzle-orm/drizzle-zod/dist/drizzle-zod-0.8.3.tgz",
@@ -43,10 +43,14 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@hono/eslint-config": "^2.0.3",
     "@types/bun": "latest",
     "@types/jsonwebtoken": "^9.0.10",
+    "@typescript-eslint/eslint-plugin": "^8.40.0",
+    "@typescript-eslint/parser": "^8.40.0",
     "drizzle-kit": "^0.31.4",
     "eslint": "^9.33.0",
+    "eslint-plugin-drizzle": "^0.2.3",
     "globals": "^16.3.0",
     "jiti": "^2.5.1",
     "typescript-eslint": "^8.40.0"
