@@ -1,36 +1,48 @@
-import { incomeSchema } from "@/schemas";
+import {
+  incomeSelectSchema,
+  incomeInsertSchema,
+  incomeUpdateSchema,
+} from "@/schemas";
 
-export const getIncomeDto = incomeSchema.pick({
-  id: true,
-  userId: true,
-  name: true,
-  amount: true,
-  frequency: true,
-  isHourly: true,
-  startDate: true,
-  endDate: true,
-});
+export const getIncomeDto = incomeSelectSchema
+  .pick({
+    id: true,
+    userId: true,
+    name: true,
+    amount: true,
+    frequency: true,
+    isHourly: true,
+    startDate: true,
+    endDate: true,
+  })
+  .openapi("Income");
 
-export const getIncomesDto = getIncomeDto.array();
+export const getIncomesDto = getIncomeDto.array().openapi("Incomes");
 
-export const createIncomeDto = incomeSchema.pick({
-  name: true,
-  amount: true,
-  frequency: true,
-  isHourly: true,
-  startDate: true,
-  endDate: true,
-});
+export const createIncomeDto = incomeInsertSchema
+  .pick({
+    name: true,
+    amount: true,
+    frequency: true,
+    isHourly: true,
+    startDate: true,
+    endDate: true,
+  })
+  .openapi("CreateIncome");
 
-export const createIncomeResponseDto = incomeSchema.pick({
-  id: true,
-});
+export const createIncomeResponseDto = incomeSelectSchema
+  .pick({
+    id: true,
+  })
+  .openapi("CreateIncomeResponse");
 
-export const updateIncomeDto = incomeSchema.pick({
-  name: true,
-  amount: true,
-  frequency: true,
-  isHourly: true,
-  startDate: true,
-  endDate: true,
-});
+export const updateIncomeDto = incomeUpdateSchema
+  .pick({
+    name: true,
+    amount: true,
+    frequency: true,
+    isHourly: true,
+    startDate: true,
+    endDate: true,
+  })
+  .openapi("UpdateIncome");

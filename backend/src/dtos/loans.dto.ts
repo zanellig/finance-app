@@ -1,52 +1,66 @@
-import { loan } from "@/schemas";
+import {
+  loanSelectSchema,
+  loanInsertSchema,
+  loanUpdateSchema,
+} from "@/schemas";
 
-export const getLoanDto = loan.pick({
-  id: true,
-  entityId: true,
-  name: true,
-  initialCapital: true,
-  annualInterestRate: true,
-  installments: true,
-  remainingInstallments: true,
-  totalAnnualFinancedCost: true,
-  amortizationStrategy: true,
-  currency: true,
-  remainingCapital: true,
-});
+export const getLoanDto = loanSelectSchema
+  .pick({
+    id: true,
+    entityId: true,
+    name: true,
+    initialCapital: true,
+    annualInterestRate: true,
+    installments: true,
+    remainingInstallments: true,
+    totalAnnualFinancedCost: true,
+    amortizationStrategy: true,
+    currency: true,
+    remainingCapital: true,
+  })
+  .openapi("Loan");
 
-export const getLoansDto = getLoanDto.array();
+export const getLoansDto = getLoanDto.array().openapi("Loans");
 
-export const createLoanDto = loan.pick({
-  entityId: true,
-  name: true,
-  initialCapital: true,
-  annualInterestRate: true,
-  installments: true,
-  remainingInstallments: true,
-  totalAnnualFinancedCost: true,
-  amortizationStrategy: true,
-  currency: true,
-  remainingCapital: true,
-});
+export const createLoanDto = loanInsertSchema
+  .pick({
+    entityId: true,
+    name: true,
+    initialCapital: true,
+    annualInterestRate: true,
+    installments: true,
+    remainingInstallments: true,
+    totalAnnualFinancedCost: true,
+    amortizationStrategy: true,
+    currency: true,
+    remainingCapital: true,
+  })
+  .openapi("CreateLoan");
 
-export const createLoanResponseDto = loan.pick({
-  id: true,
-});
+export const createLoanResponseDto = loanSelectSchema
+  .pick({
+    id: true,
+  })
+  .openapi("CreateLoanResponse");
 
-export const updateLoanDto = loan.pick({
-  id: true,
-  entityId: true,
-  name: true,
-  initialCapital: true,
-  annualInterestRate: true,
-  installments: true,
-  remainingInstallments: true,
-  totalAnnualFinancedCost: true,
-  amortizationStrategy: true,
-  currency: true,
-  remainingCapital: true,
-});
+export const updateLoanDto = loanUpdateSchema
+  .pick({
+    id: true,
+    entityId: true,
+    name: true,
+    initialCapital: true,
+    annualInterestRate: true,
+    installments: true,
+    remainingInstallments: true,
+    totalAnnualFinancedCost: true,
+    amortizationStrategy: true,
+    currency: true,
+    remainingCapital: true,
+  })
+  .openapi("UpdateLoan");
 
-export const deleteLoanDto = loan.pick({
-  id: true,
-});
+export const deleteLoanDto = loanSelectSchema
+  .pick({
+    id: true,
+  })
+  .openapi("DeleteLoan");

@@ -1,31 +1,45 @@
-import { entity } from "@/schemas";
+import {
+  entitySelectSchema,
+  entityInsertSchema,
+  entityUpdateSchema,
+} from "@/schemas";
 
-export const getEntityDto = entity.pick({
-  id: true,
-  status: true,
-  name: true,
-  type: true,
-});
+export const getEntityDto = entitySelectSchema
+  .pick({
+    id: true,
+    status: true,
+    name: true,
+    type: true,
+  })
+  .openapi("Entity");
 
-export const getEntitiesDto = getEntityDto.array();
+export const getEntitiesDto = getEntityDto.array().openapi("Entities");
 
-export const createEntityDto = entity.pick({
-  name: true,
-  type: true,
-});
+export const createEntityDto = entityInsertSchema
+  .pick({
+    name: true,
+    type: true,
+  })
+  .openapi("CreateEntity");
 
-export const createEntityResponseDto = entity.pick({
-  id: true,
-});
+export const createEntityResponseDto = entitySelectSchema
+  .pick({
+    id: true,
+  })
+  .openapi("CreateEntityResponse");
 
-export const updateEntityDto = entity.pick({
-  id: true,
-  status: true,
-  name: true,
-  type: true,
-});
+export const updateEntityDto = entityUpdateSchema
+  .pick({
+    id: true,
+    status: true,
+    name: true,
+    type: true,
+  })
+  .openapi("UpdateEntity");
 
-export const deleteEntityDto = entity.pick({
-  id: true,
-  status: true,
-});
+export const deleteEntityDto = entitySelectSchema
+  .pick({
+    id: true,
+    status: true,
+  })
+  .openapi("DeleteEntity");
