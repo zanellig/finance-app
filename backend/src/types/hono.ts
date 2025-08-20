@@ -1,7 +1,7 @@
-import { Context } from "hono";
-import { JWTPayload } from "@/services/auth";
-import { PinoLogger } from "hono-pino";
-import { OpenAPIHono } from "@hono/zod-openapi";
+import type { OpenAPIHono } from "@hono/zod-openapi";
+import type { Context } from "hono";
+import type { PinoLogger } from "hono-pino";
+import type { JWTPayload } from "@/services/auth";
 
 export interface User {
   id: string;
