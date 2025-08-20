@@ -8,11 +8,11 @@ export enum IncomeFrequency {
 }
 
 export const income = z.object({
-  id: z.string().uuid(),
-  userId: z.string().uuid(),
+  id: z.uuidv4(),
+  userId: z.uuidv4(),
   name: z.string(),
   amount: z.string().regex(/^\d+\.\d{2}$/), // decimal
-  frequency: z.nativeEnum(IncomeFrequency),
+  frequency: z.enum(IncomeFrequency),
   isHourly: z.boolean(),
   startDate: z.date(),
   endDate: z.date().optional(),
