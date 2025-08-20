@@ -9,8 +9,8 @@ import {
 
 import { v4 } from "uuid";
 
-import { entities } from "@/models/entities.model";
 import { cascadeCascade, defaultTimestamps } from "@/models/constants";
+import { entities } from "@/models/entities.model";
 
 export const accounts = mysqlTable("accounts", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),

@@ -2,8 +2,8 @@ import { mysqlEnum, mysqlTable, varchar } from "drizzle-orm/mysql-core";
 
 import { v4 } from "uuid";
 
-import { users } from "@/models/users.model";
 import { cascadeCascade, defaultTimestamps } from "@/models/constants";
+import { users } from "@/models/users.model";
 
 export const entities = mysqlTable("entities", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),

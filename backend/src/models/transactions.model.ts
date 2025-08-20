@@ -9,20 +9,24 @@ import {
 
 import { v4 } from "uuid";
 
-import { creditCards } from "@/models/credit-cards.model";
 import { accounts } from "@/models/accounts.model";
+import { defaultTimestamps, noActionCascade } from "@/models/constants";
+import { creditCards } from "@/models/credit-cards.model";
 import { loans } from "@/models/loans.model";
 import { users } from "@/models/users.model";
-import { defaultTimestamps, noActionCascade } from "@/models/constants";
 
 export const creditCardTransactions = mysqlTable("credit_card_transactions", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
   creditCardId: varchar("credit_card_id", { length: 36 })
     .references(() => creditCards.id, noActionCascade)
     .notNull(),
-  recordStatus: mysqlEnum("record_status", ["active", "inactive", "deleted"]).default("active"),
+  recordStatus: mysqlEnum("record_status", [
+    "active",
+    "inactive",
+    "deleted",
+  ]).default("active"),
   status: mysqlEnum(["approved", "declined", "pending", "refunded"]).default(
-    "pending",
+    "pending"
   ),
   currency: mysqlEnum(["ARS", "USD"]).default("ARS"),
   amount: decimal({ precision: 2 }).default("0.00").notNull(),
@@ -38,7 +42,7 @@ export const transactions = mysqlTable("transactions", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
   userId: varchar("user_id", { length: 36 }).references(
     () => users.id,
-    noActionCascade,
+    noActionCascade
   ),
   status: mysqlEnum(["active", "inactive", "deleted"]).default("active"),
   fromAccountId: varchar("from_account_id", { length: 36 })
@@ -49,7 +53,7 @@ export const transactions = mysqlTable("transactions", {
     .notNull(),
   loanId: varchar("loan_id", { length: 36 }).references(
     () => loans.id,
-    noActionCascade,
+    noActionCascade
   ),
   type: mysqlEnum([
     "payment",

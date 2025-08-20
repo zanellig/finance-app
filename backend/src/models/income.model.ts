@@ -9,14 +9,14 @@ import {
 
 import { v4 } from "uuid";
 
-import { users } from "@/models/users.model";
 import { defaultTimestamps, noActionCascade } from "@/models/constants";
+import { users } from "@/models/users.model";
 
 export const income = mysqlTable("income", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
   userId: varchar("user_id", { length: 36 }).references(
     () => users.id,
-    noActionCascade,
+    noActionCascade
   ),
   status: mysqlEnum(["active", "inactive", "deleted"]).default("active"),
   name: varchar({ length: 255 }),

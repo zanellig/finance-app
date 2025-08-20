@@ -9,17 +9,17 @@ import {
 
 import { v4 } from "uuid";
 
-import { entities } from "@/models/entities.model";
 import { defaultTimestamps, setNullCascade } from "@/models/constants";
+import { entities } from "@/models/entities.model";
 
 export const creditCards = mysqlTable("credit_cards", {
   id: varchar({ length: 36 }).primaryKey().unique().$defaultFn(v4),
   entityId: varchar("entity_id", { length: 36 }).references(
     () => entities.id,
-    setNullCascade,
+    setNullCascade
   ),
   status: mysqlEnum(["active", "inactive", "blocked", "deleted"]).default(
-    "inactive",
+    "inactive"
   ),
   name: varchar({ length: 36 }).notNull().unique(),
   description: varchar({ length: 255 }),
